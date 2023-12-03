@@ -1,0 +1,6 @@
+{
+  "npm.packageManager": "yarn",
+  "terminal.explorerKind": "integrated",
+  "terminal.integrated.automationProfile.osx": {},
+  "terminal.integrated.defaultProfile.osx": "zsh"
+}
