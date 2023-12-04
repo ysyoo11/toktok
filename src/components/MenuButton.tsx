@@ -36,7 +36,7 @@ export default function MenuButton({ className }: Props) {
                 <button
                   className={`${
                     active ? 'bg-gray-100' : 'text-gray-900'
-                  } group flex w-full items-center justify-between rounded-md px-2 py-2`}
+                  } group flex w-full items-center justify-between rounded-md p-3`}
                 >
                   <div className='flex items-center space-x-2'>
                     <MoonIcon className='h-5 w-5' />
