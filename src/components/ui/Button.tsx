@@ -11,20 +11,35 @@ const colorClass = {
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   color?: keyof typeof colorClass;
   className?: string;
+  size?: 'sm' | 'base';
+  icon?: JSX.Element;
+  full?: boolean;
 };
 
-export default function Button({ color = 'pink', className, ...props }: Props) {
+export default function Button({
+  color = 'pink',
+  className,
+  size = 'base',
+  icon,
+  full = false,
+  ...props
+}: Props) {
   const { children } = props;
 
   return (
     <button
       className={clsx(
-        'rounded px-6 py-1.5 font-medium disabled:cursor-default disabled:bg-gray-200 disabled:text-white',
+        'relative rounded px-6 py-2 font-medium disabled:cursor-default disabled:bg-gray-200 disabled:text-white',
+        {
+          'w-full': full,
+          'text-sm': size === 'sm',
+        },
         className,
         colorClass[color],
       )}
       {...props}
     >
+      {icon && <i className='absolute left-2'>{icon}</i>}
       {children}
     </button>
   );
