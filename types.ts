@@ -7,8 +7,9 @@ export type UserRef = {
 export type User = {
   _id: string;
   _createdAt: Date;
+  _type: 'user';
   name: string;
-  image: string;
+  imageURL: string;
   bio: string;
   following: UserRef[];
   follower: UserRef[];

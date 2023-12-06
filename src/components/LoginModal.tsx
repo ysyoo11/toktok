@@ -1,6 +1,10 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { usePathname } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { Fragment, useState } from 'react';
+
+import { baseUrl } from '@/utils/env';
 
 import GoogleLogo from './svg/GoogleLogo';
 import Button from './ui/Button';
@@ -13,8 +17,10 @@ type Props = {
 export default function LoginModal({ isOpen, onClose }: Props) {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
 
+  const pathname = usePathname();
+
   const handleGoogleSignin = () => {
-    // TODO:
+    signIn('google', { callbackUrl: baseUrl + pathname });
   };
 
   return (
@@ -83,7 +89,7 @@ export default function LoginModal({ isOpen, onClose }: Props) {
                     onClick={() =>
                       setMode(mode === 'login' ? 'signup' : 'login')
                     }
-                    className='text-theme-pink-100 hover:text-theme-pink-200 ml-1.5 font-medium'
+                    className='ml-1.5 font-medium text-theme-pink-100 hover:text-theme-pink-200'
                   >
                     {mode === 'login' ? 'Sign up' : 'Log in'}
                   </button>

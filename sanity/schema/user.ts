@@ -53,6 +53,11 @@ const user = {
       ],
     },
     {
+      name: 'imageURL',
+      title: 'Image URL',
+      type: 'url',
+    },
+    {
       name: 'following',
       title: 'Following',
       type: 'array',
