@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import useSWRImmutable from 'swr/immutable';
 
-import { getUserByEmail } from '@/sanity/sanity-utils';
+import { getUserByEmail } from '@/sanity/utils/user';
 
 export function useUser() {
   const { data: session, status } = useSession();

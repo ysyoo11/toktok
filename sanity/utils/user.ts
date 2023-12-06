@@ -6,8 +6,8 @@ import { User } from '@/types';
 import { slugify } from '@/utils/slugify';
 import { urlToObject } from '@/utils/url-to-object';
 
-import { client } from './lib/client';
-import { urlForImage } from './lib/image';
+import { client } from '../lib/client';
+import { urlForImage } from '../lib/image';
 
 export async function getUsers(): Promise<User[]> {
   return await client.fetch(
