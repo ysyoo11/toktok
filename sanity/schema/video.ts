@@ -4,9 +4,9 @@ const video = {
   title: 'Video',
   fields: [
     {
-      name: 'title',
-      title: 'Title',
-      type: 'string',
+      name: 'videoUrl',
+      title: 'Video URL',
+      type: 'url',
     },
     {
       name: 'author',
@@ -15,9 +15,22 @@ const video = {
       to: [{ type: 'user' }],
     },
     {
-      name: 'description',
-      title: 'Description',
+      name: 'caption',
+      title: 'Caption',
       type: 'string',
+    },
+    {
+      name: 'visibility',
+      title: 'Visibility',
+      type: 'string',
+      initialValue: { title: 'Public', value: 'public' },
+      options: {
+        list: [
+          { title: 'Public', value: 'public' },
+          { title: 'Friends only', value: 'friends' },
+          { title: 'Private', value: 'private' },
+        ],
+      },
     },
     {
       name: 'music',

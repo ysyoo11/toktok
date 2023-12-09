@@ -1,7 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
-import { createUser, getUserByEmail } from '@/sanity/sanity-utils';
+import { createUser, getUserByEmail } from '@/sanity/utils/user';
 import { ENV } from '@/utils/env';
 
 export const authOptions: NextAuthOptions = {

@@ -5,7 +5,7 @@ const ENV_LIST = [
   'NEXTAUTH_SECRET',
   'GOOGLE_CLIENT_ID',
   'GOOGLE_CLIENT_SECRET',
-  'SANITY_API_TOKEN',
+  'NEXT_PUBLIC_SANITY_API_TOKEN',
 ] as const;
 
 export const ENV = {
@@ -15,7 +15,7 @@ export const ENV = {
   NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
-  SANITY_API_TOKEN: process.env.SANITY_API_TOKEN,
+  NEXT_PUBLIC_SANITY_API_TOKEN: process.env.NEXT_PUBLIC_SANITY_API_TOKEN,
 } as { [key in (typeof ENV_LIST)[number]]: string };
 
 export const isDev = process.env.NODE_ENV === 'development';
