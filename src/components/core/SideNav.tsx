@@ -44,7 +44,7 @@ export default function SideNav() {
                 <Link href={href}>
                   <div className='flex items-center rounded-lg p-3 hover:bg-gray-100 lg:space-x-3'>
                     {pathname === href ? (
-                      <nav.activeIcon className='text-theme-pink-100 h-6 w-6 stroke-2' />
+                      <nav.activeIcon className='h-6 w-6 stroke-2 text-theme-pink-100' />
                     ) : (
                       <nav.icon className='h-6 w-6 stroke-2' />
                     )}

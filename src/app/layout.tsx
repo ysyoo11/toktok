@@ -32,9 +32,11 @@ export default async function RootLayout({ children }: Props) {
       <body className={inter.className}>
         <Provider session={session}>
           <Header />
-          <div className='flex'>
+          <div className='flex w-full'>
             <SideNav />
-            <div className='ml-4 mt-16 min-h-[4000px] py-4'>{children}</div>
+            <div className='mx-auto mt-16 min-h-[4000px] w-full max-w-3xl px-2 py-4 lg:pl-0'>
+              {children}
+            </div>
           </div>
         </Provider>
       </body>
