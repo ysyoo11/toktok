@@ -14,7 +14,7 @@ export const projectId = assertValue(
 
 export const useCdn = true;
 
-export const token = ENV.SANITY_API_TOKEN;
+export const token = ENV.NEXT_PUBLIC_SANITY_API_TOKEN;
 
 function assertValue<T>(v: T | undefined, errorMessage: string): T {
   if (v === undefined) {
