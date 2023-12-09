@@ -19,6 +19,21 @@ export type User = {
   collections: Collection[];
 };
 
-export type Video = {};
+export type Video = {
+  _id: string;
+  _createdAt: Date;
+  _type: 'video';
+  caption: string;
+  videoUrl: string;
+  author: User;
+  visibility: 'public' | 'friends' | 'private';
+  music?: string;
+  comments: Comment[];
+  view: number;
+  likes: User[];
+  tags?: string[];
+};
+
+export type Comment = {};
 
 export type Collection = {};
