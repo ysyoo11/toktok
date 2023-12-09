@@ -13,6 +13,7 @@ export function useUser() {
 
   return {
     user,
+    uid: user ? user._id : undefined,
     isLoading,
   };
 }
