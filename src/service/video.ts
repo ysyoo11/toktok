@@ -3,7 +3,7 @@ import { groq } from 'next-sanity';
 import { VideoPostForm } from '@/app/upload/page';
 import { Video } from '@/types';
 
-import { client } from '../lib/client';
+import { client } from './sanity';
 
 export async function getAllVideos(): Promise<Video[]> {
   return await client.fetch(
