@@ -5,7 +5,7 @@ export type UserRef = {
 };
 
 export type User = {
-  _id: string;
+  id: string;
   _createdAt: Date;
   _type: 'user';
   name: string;
