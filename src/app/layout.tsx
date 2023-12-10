@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 
 import Header from '@/components/core/Header';
 import SideNav from '@/components/core/SideNav';
-import Provider from '@/context/client-provider';
+import AuthProvider from '@/context/auth-provider';
 
 import { authOptions } from './api/auth/[...nextauth]/options';
 
@@ -30,7 +30,7 @@ export default async function RootLayout({ children }: Props) {
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <Provider session={session}>
+        <AuthProvider session={session}>
           <Header />
           <div className='flex w-full'>
             <SideNav />
@@ -38,7 +38,7 @@ export default async function RootLayout({ children }: Props) {
               {children}
             </div>
           </div>
-        </Provider>
+        </AuthProvider>
       </body>
     </html>
   );
