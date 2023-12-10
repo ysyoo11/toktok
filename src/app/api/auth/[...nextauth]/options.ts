@@ -1,7 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
-import { createUser, getUserByEmail } from '@/sanity/utils/user';
+import { createUser } from '@/service/user';
 import { ENV } from '@/utils/env';
 
 export const authOptions: NextAuthOptions = {
@@ -13,16 +13,22 @@ export const authOptions: NextAuthOptions = {
   ],
   secret: ENV.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn({ user: googleUser }) {
-      const user = await getUserByEmail(googleUser.email!);
+    async signIn({ user }) {
+      if (!user.email) return false;
 
-      if (user) {
-        return true;
-      }
-
-      await createUser(googleUser);
+      await createUser(user);
 
       return true;
+    },
+    async session({ session }) {
+      const user = session.user;
+      if (user) {
+        session.user = {
+          ...user,
+          username: user.email?.split('@')[0] || '',
+        };
+      }
+      return session;
     },
   },
 };

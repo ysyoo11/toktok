@@ -8,7 +8,7 @@ import Dropdown, { Option } from '@/components/ui/Dropdown';
 import Input from '@/components/ui/Input';
 import VideoPreview from '@/components/VideoPreview';
 import { useUser } from '@/hooks/use-user';
-import { createVideo } from '@/sanity/utils/video';
+// import { createVideo } from '@/service/video';
 
 const VALID_FILE_TYPES = ['video/mp4', 'video/webm'];
 
@@ -59,12 +59,12 @@ export default function UploadPage() {
     e.preventDefault();
     if (!uid) return;
     setLoading(true);
-    await createVideo(form)
-      .then(() => {
-        initialise();
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    // await createVideo(form)
+    //   .then(() => {
+    //     initialise();
+    //   })
+    //   .catch(console.error)
+    //   .finally(() => setLoading(false));
   };
 
   const isDisabled =

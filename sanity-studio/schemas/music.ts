@@ -7,20 +7,30 @@ const music = {
       name: 'author',
       title: 'Author',
       type: 'reference',
-      to: [{ type: 'user' }],
+      to: [{type: 'user'}],
+    },
+    {
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+    },
+    {
+      name: 'artist',
+      title: 'Artist',
+      type: 'string',
     },
     {
       name: 'file',
       title: 'File',
       type: 'file',
-      accept: 'audio/*',
+      accept: 'audio/mp3',
       description: 'Only mp3 files are acceptable',
     },
     {
       name: 'cover',
       title: 'Cover',
       type: 'image',
-      options: { hotspot: true },
+      options: {hotspot: true},
       accept: 'image/*',
       fields: [
         {
@@ -31,6 +41,6 @@ const music = {
       ],
     },
   ],
-};
+}
 
-export default music;
+export default music

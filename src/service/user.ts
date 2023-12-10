@@ -3,11 +3,8 @@ import { AdapterUser } from 'next-auth/adapters';
 import { groq } from 'next-sanity';
 
 import { User } from '@/types';
-import { slugify } from '@/utils/slugify';
-import { urlToObject } from '@/utils/url-to-object';
 
-import { client } from '../lib/client';
-import { urlForImage } from '../lib/image';
+import { client } from './sanity';
 
 export async function getUsers(): Promise<User[]> {
   return await client.fetch(
@@ -42,6 +39,17 @@ export async function getUserById(id: string): Promise<User> {
     .then((res) => res[0]);
 }
 
+export async function getUserByUsername(username: string) {
+  return await client.fetch(`
+  *[_type == 'user' && username == '${username}'][0]{
+    ...,
+    "id": _id,
+    following[]->{username,image},
+    followers[]->{username,image},
+    "saved":saved[]->_id
+  }`);
+}
+
 export async function getUserByEmail(email: string): Promise<User> {
   return await client
     .fetch(
@@ -57,50 +65,49 @@ export async function getUserByEmail(email: string): Promise<User> {
     .then((res) => res[0]);
 }
 
-async function uploadImage(file: File, username: string) {
-  return await client.assets.upload('image', file, {
-    contentType: 'image/jpg',
-    filename: `${username}.jpg`,
-  });
-}
+// async function uploadImage(file: File, username: string) {
+//   return await client.assets.upload('image', file, {
+//     contentType: 'image/jpg',
+//     filename: `${username}.jpg`,
+//   });
+// }
 
 export async function createUser(user: NextAuthUser | AdapterUser) {
   const { image, id, name, email } = user;
 
-  const file = image ? await urlToObject(image) : null;
+  // const file = image ? await urlToObject(image) : null;
 
-  let imageId = '';
+  // let imageId = '';
+  // let imageURL = '';
 
-  if (file) {
-    await uploadImage(file, name || 'image')
-      .then((doc) => {
-        imageId = doc._id;
-      })
-      .catch(console.error);
-  }
+  // if (file) {
+  //   await uploadImage(file, name || 'image')
+  //     .then((doc) => {
+  //       imageId = doc._id;
+  //       imageURL = doc.url;
+  //     })
+  //     .catch(console.error);
+  // }
 
-  const asset = {
-    _type: 'reference',
-    _ref: imageId,
-  };
+  // const asset = {
+  //   _type: 'reference',
+  //   _ref: imageId,
+  // };
 
   const userData = {
     _type: 'user',
     _id: id,
     name,
+    username: user.email!.split('@')[0],
     email,
-    slug: {
-      _type: 'slug',
-      current: slugify(email!.split('@')[0]),
-    },
-    image: file
-      ? {
-          _type: 'image',
-          asset,
-          alt: `Profile of ${name}`,
-        }
-      : null,
-    imageURL: file ? urlForImage({ asset }).url() : '',
+    // image: file
+    //   ? {
+    //       _type: 'image',
+    //       asset,
+    //       alt: `Profile of ${name}`,
+    //     }
+    //   : null,
+    imageURL: image,
   };
 
   return await client.createIfNotExists(userData).catch(console.error);
