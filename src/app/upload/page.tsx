@@ -8,7 +8,7 @@ import Dropdown, { Option } from '@/components/ui/Dropdown';
 import Input from '@/components/ui/Input';
 import VideoPreview from '@/components/VideoPreview';
 import { useUser } from '@/hooks/use-user';
-// import { createVideo } from '@/service/video';
+import { createVideo } from '@/service/video';
 
 const VALID_FILE_TYPES = ['video/mp4', 'video/webm'];
 
@@ -16,8 +16,8 @@ type Visibility = 'public' | 'friends' | 'private';
 
 export type VideoPostForm = {
   caption: string;
-  file: File | null;
-  authorId: string | undefined;
+  file: Blob | null;
+  authorId?: string;
   visibility: Visibility;
 };
 
@@ -57,14 +57,14 @@ export default function UploadPage() {
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!uid) return;
+    if (!uid || !form.file) return;
     setLoading(true);
-    // await createVideo(form)
-    //   .then(() => {
-    //     initialise();
-    //   })
-    //   .catch(console.error)
-    //   .finally(() => setLoading(false));
+    await createVideo(form)
+      .then(() => {
+        initialise();
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   };
 
   const isDisabled =
