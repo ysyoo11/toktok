@@ -130,6 +130,11 @@ const video = {
       validation: (rule: Rule) => rule.unique(),
     },
     {
+      name: 'saved',
+      title: 'Saved',
+      type: 'number',
+    },
+    {
       name: 'tag',
       title: 'Tags',
       type: 'array',

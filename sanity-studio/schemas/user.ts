@@ -53,7 +53,7 @@ const user = {
     //   ],
     // },
     {
-      name: 'imageURL',
+      name: 'imageUrl',
       title: 'Image URL',
       type: 'url',
     },
