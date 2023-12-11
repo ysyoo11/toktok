@@ -1,52 +1,23 @@
-import { groq } from 'next-sanity';
-
 import { VideoPostForm } from '@/app/upload/page';
 import { Video } from '@/types';
+import { baseUrl } from '@/utils/env';
 
-import { client } from './sanity';
-
+// TODO: Make a logic for infinite scroll
 export async function getAllVideos(): Promise<Video[]> {
-  return await client.fetch(
-    groq`*[_type == 'video']{
-      _id,
-      _createdAt,
-      videoUrl,
-      author,
-      caption,
-      visibility,
-      music,
-      comment,
-      view,
-      likes,
-      tag
-    }`,
-  );
-}
+  const { videos } = await fetch(baseUrl + '/api/videos') //
+    .then((res) => res.json());
 
-async function uploadVideo(file: File) {
-  return await client.assets.upload('file', file, {
-    contentType: file.type,
-    filename: file.name,
-  });
+  return videos;
 }
 
 export async function createVideo(form: VideoPostForm) {
-  const { file, authorId, caption } = form;
+  const formData = new FormData();
+  Object.entries(form) //
+    .forEach((item) => formData.append(item[0], item[1]!));
 
-  if (!file || !authorId) return;
-
-  const { url: videoUrl } = await uploadVideo(file);
-
-  const videoData = {
-    _type: 'video',
-    videoUrl,
-    author: {
-      _type: 'reference',
-      _ref: authorId,
-    },
-    caption,
-    visibility: 'public',
-  };
-
-  return await client.create(videoData).catch(console.error);
+  return await fetch('/api/videos', {
+    method: 'POST',
+    cache: 'no-cache',
+    body: formData,
+  }).then((res) => res.json());
 }

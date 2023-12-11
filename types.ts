@@ -9,6 +9,7 @@ export type User = {
   _createdAt: Date;
   _type: 'user';
   name: string;
+  username: string;
   imageURL: string;
   bio: string;
   following: UserRef[];
