@@ -6,7 +6,7 @@ import { Fragment, useState } from 'react';
 
 import { baseUrl } from '@/utils/env';
 
-import GoogleLogo from './svg/GoogleLogo';
+import GoogleLogo from './icon/GoogleLogo';
 import Button from './ui/Button';
 
 type Props = {
