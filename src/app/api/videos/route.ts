@@ -10,13 +10,23 @@ export async function GET() {
         _id,
         _createdAt,
         videoUrl,
-        author->{username, imageURL},
+        author->{username, imageUrl, name},
         caption,
         visibility,
         music,
-        comment,
+        comments[]{
+          author->{username, imageUrl, name},
+          text,
+          likes->{username, imageUrl, name},
+          replies[]{
+            author->{username, imageUrl, name},
+            text,
+            likes->{username, imageUrl, name},
+          }
+        },
         view,
-        likes,
+        likes[]->{username, imageUrl},
+        saved,
         tag
       }`,
     )
