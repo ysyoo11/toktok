@@ -10,7 +10,7 @@ export type User = {
   _type: 'user';
   name: string;
   username: string;
-  imageURL: string;
+  imageUrl: string;
   bio: string;
   following: UserRef[];
   follower: UserRef[];
@@ -32,9 +32,17 @@ export type Video = {
   comments: Comment[];
   view: number;
   likes: User[];
+  saved: number;
   tags?: string[];
 };
 
-export type Comment = {};
+export type Comment = {
+  author: User;
+  text: string;
+  likes: User[];
+  replies: Reply[];
+};
+
+export type Reply = Omit<Comment, 'replies'>;
 
 export type Collection = {};
