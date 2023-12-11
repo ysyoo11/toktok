@@ -31,7 +31,7 @@ export default function ProfileButton({ image, name }: Props) {
       <div className='flex items-center'>
         <Menu.Button className='w-full focus:outline-none'>
           {image ? (
-            <Avatar image={image} name={name || 'a user'} />
+            <Avatar image={image} name={name || 'a user'} size='sm' />
           ) : (
             <div className='h-10 w-10 rounded-full bg-gray-300' />
           )}

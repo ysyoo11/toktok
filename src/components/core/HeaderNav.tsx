@@ -28,10 +28,12 @@ export default function HeaderNav() {
           <PaperAirplaneIcon className='h-6 w-6 -translate-y-0.5 -rotate-45 stroke-2' />
         </Link>
         {user ? (
-          <ProfileButton image={user.imageURL} name={user.name} />
+          <ProfileButton image={user.imageUrl} name={user.name} />
         ) : (
           <>
-            <Button onClick={() => setShowModal(true)}>Log in</Button>
+            <Button size='sm' onClick={() => setShowModal(true)}>
+              Log in
+            </Button>
             <MenuButton />
           </>
         )}
