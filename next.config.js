@@ -8,6 +8,11 @@ const nextConfig = {
         port: '',
         pathname: '/images/yk4eb995/production/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '',
+      },
     ],
   },
 };
