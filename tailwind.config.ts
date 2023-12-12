@@ -12,6 +12,9 @@ const config: Config = {
         'theme-pink-100': '#FE2D55',
         'theme-pink-200': '#EF2B50',
       },
+      screens: {
+        xs: '512px',
+      },
     },
   },
   plugins: [],
