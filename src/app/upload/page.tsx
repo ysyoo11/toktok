@@ -77,7 +77,7 @@ export default function UploadPage() {
   }, [uid]);
 
   return (
-    <>
+    <main className='py-4'>
       {form.file ? (
         <div className='flex flex-col'>
           <h1 className='text-xl font-semibold'>Upload video</h1>
@@ -123,6 +123,6 @@ export default function UploadPage() {
           validFileTypes={VALID_FILE_TYPES}
         />
       )}
-    </>
+    </main>
   );
 }

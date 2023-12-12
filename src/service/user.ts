@@ -44,8 +44,8 @@ export async function getUserByUsername(username: string) {
   *[_type == 'user' && username == '${username}'][0]{
     ...,
     "id": _id,
-    following[]->{username,image},
-    followers[]->{username,image},
+    following[]->{username,imageUrl},
+    followers[]->{username,imageUrl},
     "saved":saved[]->_id
   }`);
 }

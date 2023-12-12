@@ -34,7 +34,7 @@ export default async function RootLayout({ children }: Props) {
           <Header />
           <div className='flex w-full'>
             <SideNav />
-            <div className='mx-auto mt-16 min-h-[4000px] w-full max-w-3xl px-2 py-4 lg:pl-0'>
+            <div className='mx-auto mt-16 min-h-[4000px] w-full max-w-3xl px-3 lg:pl-0'>
               {children}
             </div>
           </div>

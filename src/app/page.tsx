@@ -1,7 +1,15 @@
-export default function HomePage() {
+import VideoPost from '@/components/VideoPost';
+import { getAllVideos } from '@/service/video';
+
+export const revalidate = 0;
+
+export default async function HomePage() {
+  const videos = await getAllVideos();
   return (
-    <main>
-      <h1 className="text-3xl">Hello World</h1>
+    <main className='divide-y'>
+      {videos.map((video) => (
+        <VideoPost key={video._id} video={video} />
+      ))}
     </main>
   );
 }
