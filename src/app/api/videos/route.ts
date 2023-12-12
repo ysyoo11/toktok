@@ -6,7 +6,7 @@ import { client } from '@/service/sanity';
 export async function GET() {
   const videos = await client
     .fetch(
-      groq`*[_type == 'video']{
+      groq`*[_type == 'video'] | order(_createdAt desc) {
         _id,
         _createdAt,
         videoUrl,
@@ -60,6 +60,10 @@ export async function POST(req: NextRequest) {
     },
     caption,
     visibility: 'public',
+    comments: [],
+    likes: [],
+    saved: 0,
+    tags: [],
   };
 
   const video = await client

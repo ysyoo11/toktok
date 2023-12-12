@@ -21,7 +21,7 @@ export default function Input({ className, label, ...props }: Props) {
           </span>
         </label>
         <span className='text-sm text-gray-400'>
-          {inputRef.current?.value.length} / {maxLength}
+          {inputRef.current?.value.length ?? 0} / {maxLength}
         </span>
       </div>
       <input

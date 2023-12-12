@@ -135,7 +135,7 @@ const video = {
       type: 'number',
     },
     {
-      name: 'tag',
+      name: 'tags',
       title: 'Tags',
       type: 'array',
       of: [{type: 'string'}],
