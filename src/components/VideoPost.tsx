@@ -25,6 +25,7 @@ export default function VideoPost({ video, className }: Props) {
     comments,
     saved,
     _id,
+    isLikedByUser,
   } = video;
 
   const [isCaptionClamped, setIsCaptionClamped] = useState(false);
@@ -97,9 +98,10 @@ export default function VideoPost({ video, className }: Props) {
               <VideoPlayer videoUrl={videoUrl} />
               <PostEngagementBar
                 videoId={_id}
-                likesNum={likes.length}
+                likesNum={likes ? likes.length : 0}
                 commentsNum={totalCommentNum}
                 savedNum={saved}
+                isLikedByUser={isLikedByUser}
               />
             </div>
           </div>
