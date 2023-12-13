@@ -5,7 +5,6 @@ import { client } from '@/service/sanity';
 import { User } from '@/types';
 
 export async function GET(req: NextRequest) {
-  console.log('GET');
   const searchParams = req.nextUrl.searchParams;
   const id = searchParams.get('id');
 

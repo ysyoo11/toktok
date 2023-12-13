@@ -8,7 +8,7 @@ import Dropdown, { Option } from '@/components/ui/Dropdown';
 import Input from '@/components/ui/Input';
 import VideoPreview from '@/components/VideoPreview';
 import { useUser } from '@/hooks/use-user';
-import { createVideo } from '@/service/video';
+import { createVideo } from '@/service/posts';
 
 const VALID_FILE_TYPES = ['video/mp4', 'video/webm'];
 
