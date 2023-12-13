@@ -55,8 +55,8 @@ export default function VideoPost({ video, className }: Props) {
     <div
       className={clsx('mx-auto flex w-full max-w-lg py-4 sm:py-8', className)}
     >
-      <Avatar image={imageUrl} name={username} className='xs:block hidden' />
-      <div className='xs:pl-3 flex w-full'>
+      <Avatar image={imageUrl} name={username} className='hidden xs:block' />
+      <div className='flex w-full xs:pl-3'>
         <div className='w-full'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center'>
@@ -66,17 +66,17 @@ export default function VideoPost({ video, className }: Props) {
                 className='xs:hidden'
                 size='sm'
               />
-              <div className='xs:pl-0 flex flex-col pl-2'>
+              <div className='flex flex-col pl-2 xs:pl-0'>
                 <span className='font-semibold'>{username}</span>
-                <span className='text-xs text-gray-600'>{name}</span>
+                <span className='text-xs text-gray-600 xs:text-sm'>{name}</span>
               </div>
             </div>
             <Button color='white-theme' size='xs' className='xs:hidden'>
               Follow
             </Button>
           </div>
-          <div className='xs:mt-1 mt-2'>
-            <div className='xs:pr-0 xs:text-base flex items-end pr-10 text-sm'>
+          <div className='mt-2 xs:mt-1'>
+            <div className='flex items-end pr-10 text-sm xs:pr-0 xs:text-base'>
               <p
                 ref={captionRef}
                 className={clsx(
@@ -105,7 +105,7 @@ export default function VideoPost({ video, className }: Props) {
           </div>
         </div>
         <div className='pr-4'>
-          <Button color='white-theme' size='sm' className='xs:block hidden'>
+          <Button color='white-theme' size='sm' className='hidden xs:block'>
             Follow
           </Button>
         </div>

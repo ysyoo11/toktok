@@ -17,7 +17,7 @@ export default function Avatar({
   return (
     <div
       className={clsx(
-        'relative overflow-hidden rounded-full',
+        'relative shrink-0 overflow-hidden rounded-full',
         {
           'h-10 w-10': size === 'sm',
           'h-14 w-14': size === 'base',
@@ -31,7 +31,7 @@ export default function Avatar({
         alt={`profile pic of ${name}`}
         fill
         className='object-cover object-center'
-        sizes={size === 'lg' ? `10rem` : `2.5rem`}
+        sizes={size === 'lg' ? `10rem` : `3.5rem`}
       />
     </div>
   );
