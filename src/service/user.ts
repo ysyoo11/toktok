@@ -39,13 +39,14 @@ export async function getUserById(id: string): Promise<User> {
     .then((res) => res[0]);
 }
 
-export async function getUserByUsername(username: string) {
+export async function getUserByUsername(username: string): Promise<User> {
   return await client.fetch(`
   *[_type == 'user' && username == '${username}'][0]{
     ...,
     "id": _id,
     following[]->{username,imageUrl},
     followers[]->{username,imageUrl},
+    liked[]->{_id},
     "saved":saved[]->_id
   }`);
 }
@@ -107,7 +108,13 @@ export async function createUser(user: NextAuthUser | AdapterUser) {
     //       alt: `Profile of ${name}`,
     //     }
     //   : null,
+    following: [],
+    followers: [],
     imageURL: image,
+    liked: [],
+    saved: [],
+    videos: [],
+    collections: [],
   };
 
   return await client.createIfNotExists(userData).catch(console.error);
