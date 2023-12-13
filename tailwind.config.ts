@@ -15,6 +15,14 @@ const config: Config = {
       screens: {
         xs: '512px',
       },
+      fontSize: {
+        xxs: [
+          '0.625rem',
+          {
+            lineHeight: '0.75rem',
+          },
+        ],
+      },
     },
   },
   plugins: [],
