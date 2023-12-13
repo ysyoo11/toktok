@@ -25,6 +25,42 @@
   [type='radio'] {
     @apply border-gray-400 text-blue-400 focus:outline-none focus:ring-0 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2;
   }
+
+  input[type='range'].custom-range {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  /***** Chrome, Safari, Opera, and Edge Chromium *****/
+  input[type='range'].custom-range::-webkit-slider-runnable-track {
+    appearance: none;
+    background: transparent;
+    height: 0.5rem;
+  }
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    margin-top: -2px; /* Centers thumb on the track */
+    background-color: white;
+    height: 0.75rem;
+    width: 0.75rem;
+    @apply rounded-full opacity-0 group-hover/range:opacity-100;
+  }
+
+  /******** Firefox ********/
+  input[type='range'].custom-range::-moz-range-track {
+    appearance: none;
+    background: transparent;
+    height: 0.5rem;
+  }
+  input[type='range']::-moz-range-thumb {
+    border: none; /*Removes extra border that FF applies*/
+    border-radius: 0; /*Removes default border-radius that FF applies*/
+    background-color: #5cd5eb;
+    height: 2rem;
+    width: 1rem;
+  }
 }
 
 @tailwind components;
