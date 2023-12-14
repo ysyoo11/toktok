@@ -1,9 +1,9 @@
 'use client';
 
 import clsx from 'clsx';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { Video } from '@/types';
+import { SimplePost } from '@/model/post';
 
 import Avatar from './Avatar';
 import PostEngagementBar from './PostEngagementBar';
@@ -11,35 +11,22 @@ import Button from './ui/Button';
 import VideoPlayer from './VideoPlayer';
 
 type Props = {
-  video: Video;
+  post: SimplePost;
   className?: string;
 };
 
-export default function VideoPost({ video, className }: Props) {
+export default function VideoPost({ post, className }: Props) {
   const {
     author: { imageUrl, username, name },
     caption,
     music,
     videoUrl,
-    likes,
-    comments,
-    saved,
-    _id,
-    isLikedByUser,
-  } = video;
+  } = post;
 
   const [isCaptionClamped, setIsCaptionClamped] = useState(false);
   const [showFullCaption, setShowFullCaption] = useState(false);
 
   const captionRef = useRef<HTMLParagraphElement>(null);
-
-  const totalCommentNum = useMemo(() => {
-    const repliesNum = comments.reduce(
-      (partialSum, currComment) => partialSum + currComment.replies.length,
-      0,
-    );
-    return repliesNum + comments.length;
-  }, [comments]);
 
   const toggleCaptionStatus = () => {
     setShowFullCaption((prev) => !prev);
@@ -96,13 +83,7 @@ export default function VideoPost({ video, className }: Props) {
             {/* <p>{music}</p> */}
             <div className='mt-2 flex items-end'>
               <VideoPlayer videoUrl={videoUrl} />
-              <PostEngagementBar
-                videoId={_id}
-                likesNum={likes ? likes.length : 0}
-                commentsNum={totalCommentNum}
-                savedNum={saved}
-                isLikedByUser={isLikedByUser}
-              />
+              <PostEngagementBar post={post} />
             </div>
           </div>
         </div>
