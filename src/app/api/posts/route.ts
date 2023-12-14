@@ -1,64 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { groq } from 'next-sanity';
 
+import { getPublicPosts } from '@/service/posts';
 import { client } from '@/service/sanity';
-import { getUserByUsername } from '@/service/user';
 
-export async function GET(req: NextRequest) {
-  const username = req.nextUrl.searchParams.get('username');
-
-  const user = username ? await getUserByUsername(username) : null;
-
-  const videos = await client
-    .fetch(
-      groq`*[_type == 'video'] | order(_createdAt desc) {
-        _id,
-        _createdAt,
-        videoUrl,
-        author->{username, imageUrl, name},
-        caption,
-        visibility,
-        music,
-        comments[]{
-          author->{username, imageUrl, name},
-          text,
-          likes->{username, imageUrl, name},
-          replies[]{
-            author->{username, imageUrl, name},
-            text,
-            likes->{username, imageUrl, name},
-          }
-        },
-        view,
-        likes[]->{username, imageUrl},
-        saved,
-        tag,
-        duration
-      }`,
-    )
-    .catch((err) => {
-      console.error(err);
-      NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
-    });
-
-  const userLikedVideoIds = [];
-  const userLikeCheckedVideos = [];
-  if (user) {
-    for (const likedVideo of user.liked) {
-      userLikedVideoIds.push(likedVideo._id);
-    }
-    for (const video of videos) {
-      const isLikedByUser = user
-        ? userLikedVideoIds.includes(video._id)
-        : false;
-      userLikeCheckedVideos.push({ ...video, isLikedByUser });
-    }
-  }
-
-  return NextResponse.json(
-    { videos: user ? userLikeCheckedVideos : videos },
-    { status: 200 },
-  );
+export async function GET() {
+  return getPublicPosts().then((data) => NextResponse.json(data));
 }
 
 export async function POST(req: NextRequest) {
@@ -73,10 +19,11 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { url: videoUrl } = await client.assets.upload('file', file);
+    const { url: videoUrl, _id } = await client.assets.upload('file', file);
 
     const videoData = {
       _type: 'video',
+      id: _id,
       videoUrl,
       author: {
         _type: 'reference',
