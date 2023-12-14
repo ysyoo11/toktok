@@ -19,7 +19,7 @@ export async function GET(
 
   const video =
     await client.fetch(groq`*[_type == 'video' && _id == '${id}'][0]{
-    _id,
+    id,
     videoUrl,
     author,
     caption,
@@ -41,10 +41,10 @@ export async function GET(
   const userLikedVideoIds = [];
   if (user) {
     for (const likedVideo of user.liked) {
-      userLikedVideoIds.push(likedVideo._id);
+      userLikedVideoIds.push(likedVideo.id);
     }
   }
-  const isLikedByUser = user ? userLikedVideoIds.includes(video._id) : false;
+  const isLikedByUser = user ? userLikedVideoIds.includes(video.id) : false;
 
   return NextResponse.json(
     { video: { ...video, isLikedByUser } },
