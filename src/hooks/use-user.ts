@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import useSWRImmutable from 'swr/immutable';
 
-import { User } from '@/types';
+import type { User } from '@/model/user';
 
 export function useUser() {
   const { data: session, status } = useSession();

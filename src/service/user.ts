@@ -2,9 +2,9 @@ import { User as NextAuthUser } from 'next-auth';
 import { AdapterUser } from 'next-auth/adapters';
 import { groq } from 'next-sanity';
 
-import { User } from '@/types';
-
 import { client } from './sanity';
+
+import type { User } from '@/model/user';
 
 export async function getUsers(): Promise<User[]> {
   return await client.fetch(
