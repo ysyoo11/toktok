@@ -16,12 +16,8 @@ type Props = {
 };
 
 export default function VideoPost({ post, className }: Props) {
-  const {
-    author: { imageUrl, username, name },
-    caption,
-    music,
-    videoUrl,
-  } = post;
+  const { authorName, authorUsername, authorImage, caption, music, videoUrl } =
+    post;
 
   const [isCaptionClamped, setIsCaptionClamped] = useState(false);
   const [showFullCaption, setShowFullCaption] = useState(false);
@@ -43,20 +39,26 @@ export default function VideoPost({ post, className }: Props) {
     <div
       className={clsx('mx-auto flex w-full max-w-lg py-4 sm:py-8', className)}
     >
-      <Avatar image={imageUrl} name={username} className='hidden xs:block' />
+      <Avatar
+        image={authorImage}
+        name={authorUsername}
+        className='hidden xs:block'
+      />
       <div className='flex w-full xs:pl-3'>
         <div className='w-full'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center'>
               <Avatar
-                image={imageUrl}
-                name={username}
+                image={authorImage}
+                name={authorName}
                 className='xs:hidden'
                 size='sm'
               />
               <div className='flex flex-col pl-2 xs:pl-0'>
-                <span className='font-semibold'>{username}</span>
-                <span className='text-xs text-gray-600 xs:text-sm'>{name}</span>
+                <span className='font-semibold'>{authorUsername}</span>
+                <span className='text-xs text-gray-600 xs:text-sm'>
+                  {authorName}
+                </span>
               </div>
             </div>
             <Button color='white-theme' size='xs' className='xs:hidden'>

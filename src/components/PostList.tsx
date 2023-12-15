@@ -1,13 +1,11 @@
 'use client';
 
-import useSWR from 'swr';
-
-import { SimplePost } from '@/model/post';
+import usePosts from '@/hooks/use-posts';
 
 import VideoPost from './VideoPost';
 
 export default function PostList() {
-  const { data: posts, isLoading } = useSWR<SimplePost[]>('/api/posts');
+  const { posts, isLoading } = usePosts();
 
   return (
     <section>
