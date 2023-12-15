@@ -15,17 +15,25 @@ export async function PUT(
     return new Response('Authentication Error', { status: 401 });
   }
 
-  const videoId = params.id;
+  const postId = params.id;
 
   const { like } = await req.json();
 
-  if (!videoId || like === undefined) {
+  if (!postId || like === undefined) {
     return new Response('Bad Request', { status: 400 });
   }
 
   const request = like ? likePost : dislikePost;
 
-  return request(videoId, user.id)
-    .then((res) => NextResponse.json(res))
-    .catch((error) => new Response(JSON.stringify(error), { status: 500 }));
+  return request(postId, user.id)
+    .then(() =>
+      NextResponse.json(
+        { message: `Liked the post (id: ${postId})` },
+        { status: 200 },
+      ),
+    )
+    .catch((error) => {
+      console.error(error);
+      return new Response(JSON.stringify(error), { status: 500 });
+    });
 }
