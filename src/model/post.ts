@@ -1,5 +1,3 @@
-import { SimpleUser } from './user';
-
 export type SimplePost = Omit<
   Post,
   'view' | 'tags' | 'comments' | 'visibility'
@@ -12,10 +10,12 @@ export type Post = {
   createdAt: Date;
   videoUrl: string;
   caption: string;
-  author: SimpleUser;
+  authorUsername: string;
+  authorName: string;
+  authorImage: string;
   visibility: 'public' | 'friends' | 'private';
   music?: string;
-  likes: SimpleUser[];
+  likes: string[];
   saved: number;
   comments: Comment[];
   view: number;
@@ -23,9 +23,9 @@ export type Post = {
 };
 
 export type Comment = {
-  author: SimpleUser;
   text: string;
-  likes: SimpleUser[];
+  username: string;
+  likes: string[];
   replies: Reply[];
 };
 

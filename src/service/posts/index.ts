@@ -10,8 +10,10 @@ const simplePostProjection = `
   "createdAt": _createdAt,
   videoUrl,
   caption,
-  author->{id, username, imageUrl, name},
-  likes[]->{id, username, imageUrl, name},
+  "authorUsername": author->username,
+  "authorName": author->name,
+  "authorImage": author->imageUrl,
+  "likes": likes[]->username,
   saved,
   music,
   "comments": count(comments)
