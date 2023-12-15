@@ -4,11 +4,13 @@ import { ReactNode } from 'react';
 
 import Header from '@/components/core/Header';
 import SideNav from '@/components/core/SideNav';
-import AuthProvider from '@/context/auth-provider';
+import AuthContext from '@/context/AuthContext';
+import SWRConfigContext from '@/context/SWRConfigContext';
 
 import { authOptions } from './api/auth/[...nextauth]/options';
 
 import type { Metadata } from 'next';
+
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -30,15 +32,15 @@ export default async function RootLayout({ children }: Props) {
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <AuthProvider session={session}>
+        <AuthContext session={session}>
           <Header />
           <div className='flex w-full'>
             <SideNav />
             <div className='mx-auto mt-16 min-h-[4000px] w-full max-w-3xl px-3 lg:pl-0'>
-              {children}
+              <SWRConfigContext>{children}</SWRConfigContext>
             </div>
           </div>
-        </AuthProvider>
+        </AuthContext>
       </body>
     </html>
   );

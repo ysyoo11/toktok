@@ -32,7 +32,7 @@ export default function RangeController({
       <input
         type='range'
         className='custom-range absolute w-full'
-        max={max}
+        max={isNaN(max) ? 1 : max}
         min={min}
         step={step}
         value={value}

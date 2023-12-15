@@ -8,7 +8,7 @@ import Dropdown, { Option } from '@/components/ui/Dropdown';
 import Input from '@/components/ui/Input';
 import VideoPreview from '@/components/VideoPreview';
 import { useUser } from '@/hooks/use-user';
-import { createVideo } from '@/service/video';
+import { createPost } from '@/lib/posts';
 
 const VALID_FILE_TYPES = ['video/mp4', 'video/webm'];
 
@@ -59,7 +59,7 @@ export default function UploadPage() {
     e.preventDefault();
     if (!uid || !form.file) return;
     setLoading(true);
-    await createVideo(form)
+    await createPost(form)
       .then(() => {
         initialise();
       })

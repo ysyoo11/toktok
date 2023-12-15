@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { groq } from 'next-sanity';
 
 import { client } from '@/service/sanity';
-import { User } from '@/types';
+
+import type { User } from '@/model/user';
 
 export async function GET(req: NextRequest) {
-  console.log('GET');
   const searchParams = req.nextUrl.searchParams;
   const id = searchParams.get('id');
 

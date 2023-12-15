@@ -9,6 +9,6 @@ type Props = {
   session: Session | null;
 };
 
-export default function AuthProvider({ children, session }: Props) {
+export default function AuthContext({ children, session }: Props) {
   return <SessionProvider session={session}>{children}</SessionProvider>;
 }
