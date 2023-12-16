@@ -26,44 +26,30 @@ export async function getUsers(): Promise<User[]> {
 }
 
 export async function getUserById(id: string): Promise<User> {
-  return await client
-    .fetch(
-      groq`*[_id == '${id}']{
-      name,
-      videos,
-      imageURL,
-      following,
-      follower
+  return await client.fetch(
+    groq`*[_type == 'user' && _id == '${id}'][0]{
+      ...,
+      "id": _id,
+      following[]->{username,imageUrl},
+      followers[]->{username,imageUrl},
+      liked[]->{_id},
+      "saved":saved[]->_id
     }`,
-    )
-    .then((res) => res[0]);
+  );
 }
 
 export async function getUserByUsername(username: string): Promise<User> {
-  return await client.fetch(`
-  *[_type == 'user' && username == '${username}'][0]{
+  return await client.fetch(
+    groq`*[_type == 'user' && username == '${username}'][0]{
     ...,
     "id": _id,
+    imageUrl,
     following[]->{username,imageUrl},
     followers[]->{username,imageUrl},
     liked[]->{_id},
     "saved":saved[]->_id
-  }`);
-}
-
-export async function getUserByEmail(email: string): Promise<User> {
-  return await client
-    .fetch(
-      groq`*[_type=='user' && email=='${email}']{
-      _id,
-      name,
-      videos,
-      imageURL,
-      following,
-      follower
-    }`,
-    )
-    .then((res) => res[0]);
+  }`,
+  );
 }
 
 // async function uploadImage(file: File, username: string) {
@@ -110,7 +96,7 @@ export async function createUser(user: NextAuthUser | AdapterUser) {
     //   : null,
     following: [],
     followers: [],
-    imageURL: image,
+    imageUrl: image,
     liked: [],
     saved: [],
     videos: [],
