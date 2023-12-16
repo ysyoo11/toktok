@@ -1,15 +1,9 @@
-import { useSession } from 'next-auth/react';
 import useSWRImmutable from 'swr/immutable';
 
 import type { User } from '@/model/user';
 
 export function useUser() {
-  const { data: session, status } = useSession();
-
-  const { data: user, isLoading } = useSWRImmutable<User>(
-    `${session?.user.username}-${status}`,
-    () => fetch('/api/me').then((res) => res.json()),
-  );
+  const { data: user, isLoading } = useSWRImmutable<User>('/api/me');
 
   return {
     user,
