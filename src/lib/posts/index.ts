@@ -1,4 +1,4 @@
-import { VideoPostForm } from '@/app/upload/page';
+import { VideoPostForm } from '@/app/(auth)/upload/page';
 import { Post, SimplePost } from '@/model/post';
 
 export async function getAllPosts(): Promise<SimplePost[]> {
