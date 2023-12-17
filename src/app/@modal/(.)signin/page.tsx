@@ -1,21 +1,22 @@
+'use client';
+
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { Fragment, useState } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 
+import GoogleLogo from '@/components/icon/GoogleLogo';
+import Button from '@/components/ui/Button';
 import { baseUrl } from '@/utils/env';
 
-import GoogleLogo from './icon/GoogleLogo';
-import Button from './ui/Button';
-
-type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-};
-
-export default function LoginModal({ isOpen, onClose }: Props) {
+export default function LoginModal() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const router = useRouter();
+
+  const onClose = useCallback(() => {
+    router.back();
+  }, [router]);
 
   const pathname = usePathname();
 
@@ -24,8 +25,13 @@ export default function LoginModal({ isOpen, onClose }: Props) {
   };
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as='div' className='relative z-10' onClose={onClose}>
+    <Transition appear show={true} as={Fragment}>
+      <Dialog
+        as='div'
+        className='fixed inset-0 z-10'
+        open={true}
+        onClose={onClose}
+      >
         <Transition.Child
           as={Fragment}
           enter='ease-out duration-300'

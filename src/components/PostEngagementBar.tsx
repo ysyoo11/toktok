@@ -29,7 +29,7 @@ export default function PostEngagementBar({ post }: Props) {
   const { setLike } = usePosts();
 
   const handleLike = async (isLiked: boolean) => {
-    if (!user) return router.push('/signin');
+    if (!user) return router.push('/signin', { scroll: false });
 
     setLike(post, user.username, isLiked);
   };

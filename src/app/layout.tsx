@@ -1,6 +1,5 @@
 import { Inter } from 'next/font/google';
 import { getServerSession } from 'next-auth';
-import { ReactNode } from 'react';
 
 import Header from '@/components/core/Header';
 import SideNav from '@/components/core/SideNav';
@@ -23,11 +22,13 @@ export const metadata: Metadata = {
   description: 'Make your day',
 };
 
-type Props = {
-  children: ReactNode;
-};
-
-export default async function RootLayout({ children }: Props) {
+export default async function RootLayout({
+  children,
+  modal,
+}: {
+  children: React.ReactNode;
+  modal: React.ReactNode;
+}) {
   const session = await getServerSession(authOptions);
 
   return (
@@ -37,10 +38,11 @@ export default async function RootLayout({ children }: Props) {
           <Header />
           <div className='flex w-full'>
             <SideNav />
-            <div className='mx-auto mt-16 min-h-[4000px] w-full max-w-3xl px-3 lg:pl-0'>
+            <div className='mx-auto mt-16 w-full max-w-3xl px-3 lg:pl-0'>
               <SWRConfigContext>{children}</SWRConfigContext>
             </div>
           </div>
+          {modal}
         </AuthContext>
       </body>
     </html>
