@@ -16,6 +16,7 @@ import { videoTimeStringToSec } from '@/utils/videoTimeStringToSec';
 
 import MutedIcon from './icon/MutedIcon';
 import SoundIcon from './icon/SoundIcon';
+import PostDetailMobileEngagementBar from './PostDetailMobileEngagementBar';
 import RangeController from './ui/RangeController';
 
 type Props = {
@@ -113,20 +114,20 @@ export default function ModalVideoPlayer({ post }: Props) {
         src={videoUrl}
         playsInline
         onTimeUpdate={onTimeUpdate}
-        autoPlay
+        // autoPlay
         muted={isMuted}
         loop
       />
-      <div className='absolute bottom-0 flex h-1/3 w-full items-end bg-gradient-to-b from-transparent to-black/50 pb-4'>
+      <div className='absolute bottom-0 flex h-max w-full items-end bg-gradient-to-b from-transparent to-black/50 pb-4'>
         <div className='relative w-full space-y-1.5 px-4'>
-          <div className='flex items-end'>
+          <div className='flex items-end justify-between'>
             <div className='basis-4/5'>
               <Link href={`/${authorUsername}`}>
                 <span className='text-lg font-medium text-white'>
                   {authorName}
                 </span>
               </Link>
-              <div className='flex items-end'>
+              <div className='mt-2 flex items-end'>
                 <p
                   ref={captionRef}
                   className={clsx(
@@ -144,7 +145,9 @@ export default function ModalVideoPlayer({ post }: Props) {
                 </button>
               </div>
             </div>
-            <div className='basis-1/5'>{/* TODO: EngagementBar */}</div>
+            <div className='pb-2'>
+              <PostDetailMobileEngagementBar post={post} />
+            </div>
           </div>
           <button
             className='hidden p-1 md:block'
@@ -167,7 +170,7 @@ export default function ModalVideoPlayer({ post }: Props) {
                   max={Math.floor(videoRef.current.duration)}
                   className='w-full basis-3/4'
                 />
-                <div className='flex basis-1/4 items-center text-center text-sm font-light text-white'>
+                <div className='flex basis-1/4 items-center text-center text-xs font-light text-white'>
                   <div className='w-10'>{currentTimeStr}</div>
                   <span>/</span>
                   <div className='w-10'>
@@ -180,7 +183,7 @@ export default function ModalVideoPlayer({ post }: Props) {
 
               <div className='group/sound justify-itemscenter absolute right-5 top-0 hidden flex-col md:flex'>
                 <div className='relative'>
-                  <div className='absolute -left-5 bottom-5 flex h-6 w-16 -rotate-90 items-center justify-center rounded-full bg-gray-900/40 px-2.5'>
+                  <div className='absolute -left-5 bottom-5 flex h-6 w-16 -rotate-90 items-center justify-center rounded-full bg-black/50 px-2.5'>
                     <RangeController
                       min={0}
                       max={1}
