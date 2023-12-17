@@ -6,6 +6,7 @@ type Props = {
   image: string;
   name: string;
   size?: 'sm' | 'base' | 'lg';
+  hasBorder?: boolean;
 };
 
 export default function Avatar({
@@ -13,6 +14,7 @@ export default function Avatar({
   image,
   name,
   size = 'base',
+  hasBorder = false,
 }: Props) {
   return (
     <div
@@ -22,6 +24,7 @@ export default function Avatar({
           'h-10 w-10': size === 'sm',
           'h-14 w-14': size === 'base',
           'h-16 w-16': size === 'lg',
+          'border-2 border-white': hasBorder,
         },
         className,
       )}
