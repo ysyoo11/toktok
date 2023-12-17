@@ -2,7 +2,7 @@ import { groq } from 'next-sanity';
 
 import { client } from '@/service/sanity';
 
-import type { SimplePost } from '@/model/post';
+import type { RawPost } from '@/model/post';
 
 const simplePostProjection = `
   ...,
@@ -16,36 +16,60 @@ const simplePostProjection = `
   "likes": likes[]->username,
   saved,
   music,
-  "comments": count(comments)
+  "comments": comments[]{
+    _key,
+    replies[]{
+      _key,
+    },
+  },
 `;
 
 export async function getPublicPosts() {
-  return await client
+  const posts = await client
     .fetch(
       groq`*[_type == 'video' && visibility == 'public'] | order(_createdAt desc) {
     ${simplePostProjection}
   }`,
     )
     .then(mapPosts);
+  return posts;
 }
 
 export async function getPostById(id: string) {
-  return await client
+  const post = await client
     .fetch(
-      groq`*[_type == 'video' && _id == '${id}'][0]{
+      groq`*[_type == 'video' && _id == '${id}'][0] {
     ${simplePostProjection}
   }`,
     )
-    .then(setLike);
+    .then(refinePost);
+  return post;
 }
 
-function mapPosts(posts: SimplePost[]) {
-  return posts.map((post: SimplePost) => ({
+function mapPosts(posts: RawPost[]) {
+  return posts.map((post: RawPost) => {
+    const comments = getTotalComments(post);
+    return {
+      ...post,
+      likes: post.likes ?? [],
+      comments,
+    };
+  });
+}
+
+function refinePost(post: RawPost) {
+  const comments = getTotalComments(post);
+  return {
     ...post,
     likes: post.likes ?? [],
-  }));
+    comments,
+  };
 }
 
-function setLike(post: SimplePost) {
-  return { ...post, likes: post.likes ?? [] };
+function getTotalComments(post: RawPost): number {
+  let replies = 0;
+  for (const comment of post.comments) {
+    replies += comment.replies.length;
+  }
+  return post.comments.length + replies;
 }

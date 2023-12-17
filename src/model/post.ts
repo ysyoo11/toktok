@@ -5,6 +5,15 @@ export type SimplePost = Omit<
   comments: number;
 };
 
+export type RawPost = Omit<SimplePost, 'comments'> & {
+  comments: {
+    _key: string;
+    replies: {
+      _key: string;
+    }[];
+  }[];
+};
+
 export type Post = {
   id: string;
   createdAt: Date;
