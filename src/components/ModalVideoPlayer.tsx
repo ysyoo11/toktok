@@ -1,5 +1,6 @@
 import { PauseIcon, PlayIcon } from '@heroicons/react/24/solid';
-import { useRouter } from 'next/navigation';
+import clsx from 'clsx';
+import Link from 'next/link';
 import {
   ChangeEvent,
   MouseEvent,
@@ -9,6 +10,7 @@ import {
   useState,
 } from 'react';
 
+import { SimplePost } from '@/model/post';
 import { parseVideoTime } from '@/utils/parse-video-time';
 import { videoTimeStringToSec } from '@/utils/videoTimeStringToSec';
 
@@ -17,20 +19,22 @@ import SoundIcon from './icon/SoundIcon';
 import RangeController from './ui/RangeController';
 
 type Props = {
-  videoUrl: string;
-  id: string;
+  post: SimplePost;
 };
 
-export default function VideoPlayer({ videoUrl, id }: Props) {
-  const [isPlaying, setIsPlaying] = useState(false);
+export default function ModalVideoPlayer({ post }: Props) {
+  const { videoUrl, authorImage, authorName, authorUsername, caption } = post;
+  const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [currentTimeStr, setCurrentTimeStr] = useState('00:00');
   const [volume, setVolume] = useState(1);
-
-  const router = useRouter();
+  const [isCaptionClamped, setIsCaptionClamped] = useState(false);
+  const [showFullCaption, setShowFullCaption] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  const captionRef = useRef<HTMLParagraphElement>(null);
 
   const togglePlayPause = (e: MouseEvent) => {
     e.stopPropagation();
@@ -65,17 +69,14 @@ export default function VideoPlayer({ videoUrl, id }: Props) {
       setVolume(0.5);
     }
   };
+  const toggleCaptionStatus = (e: MouseEvent) => {
+    e.stopPropagation();
+    setShowFullCaption((prev) => !prev);
+  };
 
   const controlVolume = (e: ChangeEvent<HTMLInputElement>) => {
     if (!videoRef.current) return;
     setVolume(+e.currentTarget.value);
-  };
-
-  const openDetailModal = (e: MouseEvent) => {
-    e.stopPropagation();
-    setIsPlaying(false);
-    videoRef.current?.pause();
-    router.push(`/post/${id}`, { scroll: false });
   };
 
   useEffect(() => {
@@ -88,23 +89,65 @@ export default function VideoPlayer({ videoUrl, id }: Props) {
     }
   }, [volume]);
 
+  useEffect(() => {
+    const caption = captionRef.current;
+    if (caption && caption.scrollHeight > caption.clientHeight) {
+      setIsCaptionClamped(true);
+    }
+  }, []);
+
   return (
     <div
-      onClick={openDetailModal}
-      className='group relative w-56 cursor-pointer overflow-hidden rounded-lg xs:w-64'
+      onClick={togglePlayPause}
+      className='group relative w-full cursor-pointer overflow-hidden'
     >
+      <div className='pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
+        {isPlaying ? (
+          <PlayIcon className='animate-fade-out h-32 w-32 text-white' />
+        ) : (
+          <PauseIcon className='animate-fade-out h-32 w-32 text-white' />
+        )}
+      </div>
       <video
         ref={videoRef}
         src={videoUrl}
         playsInline
         onTimeUpdate={onTimeUpdate}
+        autoPlay
         muted={isMuted}
         loop
       />
-      <div className='absolute bottom-0 flex h-1/3 w-full items-end bg-gradient-to-b from-transparent to-black/30 pb-4 opacity-0 transition-opacity group-hover:opacity-100'>
-        <div className='relative space-y-1.5 px-4'>
+      <div className='absolute bottom-0 flex h-1/3 w-full items-end bg-gradient-to-b from-transparent to-black/50 pb-4'>
+        <div className='relative w-full space-y-1.5 px-4'>
+          <div className='flex items-end'>
+            <div className='basis-4/5'>
+              <Link href={`/${authorUsername}`}>
+                <span className='text-lg font-medium text-white'>
+                  {authorName}
+                </span>
+              </Link>
+              <div className='flex items-end'>
+                <p
+                  ref={captionRef}
+                  className={clsx(
+                    'text-gray-100/80',
+                    showFullCaption ? 'line-clamp-none' : 'line-clamp-2',
+                  )}
+                >
+                  {caption}
+                </p>
+                <button
+                  onClick={toggleCaptionStatus}
+                  className='ml-0.5 font-medium text-gray-100/90'
+                >
+                  {showFullCaption ? 'hide' : 'more'}
+                </button>
+              </div>
+            </div>
+            <div className='basis-1/5'>{/* TODO: EngagementBar */}</div>
+          </div>
           <button
-            className='p-1'
+            className='hidden p-1 md:block'
             onClick={togglePlayPause}
             aria-label='play pause toggle'
           >
@@ -116,18 +159,18 @@ export default function VideoPlayer({ videoUrl, id }: Props) {
           </button>
           {videoRef.current && (
             <>
-              <div className='flex items-center space-x-4'>
+              <div className='flex w-full items-center space-x-4'>
                 <RangeController
                   onChange={onProgressBarControl}
                   value={currentTime}
                   min={0}
                   max={Math.floor(videoRef.current.duration)}
-                  className='w-28 xs:w-36'
+                  className='w-full basis-3/4'
                 />
-                <div className='flex items-center text-center text-xxs font-light text-white'>
-                  <div className='w-8'>{currentTimeStr}</div>
+                <div className='flex basis-1/4 items-center text-center text-sm font-light text-white'>
+                  <div className='w-10'>{currentTimeStr}</div>
                   <span>/</span>
-                  <div className='w-8'>
+                  <div className='w-10'>
                     {isNaN(videoRef.current.duration)
                       ? '00:00'
                       : parseVideoTime(videoRef.current.duration)}
@@ -135,9 +178,9 @@ export default function VideoPlayer({ videoUrl, id }: Props) {
                 </div>
               </div>
 
-              <div className='group/sound justify-itemscenter absolute right-5 top-0 flex flex-col'>
+              <div className='group/sound justify-itemscenter absolute right-5 top-0 hidden flex-col md:flex'>
                 <div className='relative'>
-                  <div className='absolute -left-5 bottom-5 flex h-6 w-16 -rotate-90 items-center justify-center rounded-full bg-gray-900/40 px-2.5 opacity-0 transition-opacity group-hover/sound:opacity-100'>
+                  <div className='absolute -left-5 bottom-5 flex h-6 w-16 -rotate-90 items-center justify-center rounded-full bg-gray-900/40 px-2.5'>
                     <RangeController
                       min={0}
                       max={1}

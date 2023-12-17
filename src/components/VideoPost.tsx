@@ -16,8 +16,15 @@ type Props = {
 };
 
 export default function VideoPost({ post, className }: Props) {
-  const { authorName, authorUsername, authorImage, caption, music, videoUrl } =
-    post;
+  const {
+    authorName,
+    authorUsername,
+    authorImage,
+    caption,
+    music,
+    videoUrl,
+    id,
+  } = post;
 
   const [isCaptionClamped, setIsCaptionClamped] = useState(false);
   const [showFullCaption, setShowFullCaption] = useState(false);
@@ -37,7 +44,10 @@ export default function VideoPost({ post, className }: Props) {
 
   return (
     <div
-      className={clsx('mx-auto flex w-full max-w-lg py-4 sm:py-8', className)}
+      className={clsx(
+        'mx-auto flex w-full max-w-md py-4 sm:mx-auto sm:max-w-lg sm:py-8',
+        className,
+      )}
     >
       <Avatar
         image={authorImage}
@@ -84,7 +94,7 @@ export default function VideoPost({ post, className }: Props) {
             {/* TODO: */}
             {/* <p>{music}</p> */}
             <div className='mt-2 flex items-end'>
-              <VideoPlayer videoUrl={videoUrl} />
+              <VideoPlayer videoUrl={videoUrl} id={id} />
               <PostEngagementBar post={post} />
             </div>
           </div>

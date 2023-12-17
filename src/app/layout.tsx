@@ -39,10 +39,12 @@ export default async function RootLayout({
           <div className='flex w-full'>
             <SideNav />
             <div className='mx-auto mt-16 w-full max-w-3xl px-3 lg:pl-0'>
-              <SWRConfigContext>{children}</SWRConfigContext>
+              <SWRConfigContext>
+                {children}
+                {modal}
+              </SWRConfigContext>
             </div>
           </div>
-          {modal}
         </AuthContext>
       </body>
     </html>

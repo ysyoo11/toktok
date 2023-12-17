@@ -23,6 +23,15 @@ const config: Config = {
           },
         ],
       },
+      animation: {
+        'fade-out': 'fade-out 0.3s forwards linear',
+      },
+      keyframes: {
+        'fade-out': {
+          '0%': { opacity: '80' },
+          '100%': { opacity: '0' },
+        },
+      },
     },
   },
   plugins: [],
