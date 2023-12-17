@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
+import { useUser } from '@/hooks/use-user';
 import { SimplePost } from '@/model/post';
 
 import Avatar from './Avatar';
@@ -25,6 +26,8 @@ export default function VideoPost({ post, className }: Props) {
     videoUrl,
     id,
   } = post;
+
+  const { user } = useUser();
 
   const [isCaptionClamped, setIsCaptionClamped] = useState(false);
   const [showFullCaption, setShowFullCaption] = useState(false);
@@ -55,7 +58,7 @@ export default function VideoPost({ post, className }: Props) {
         className='hidden xs:block'
       />
       <div className='flex w-full xs:pl-3'>
-        <div className='w-full'>
+        <div className='w-full max-w-sm'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center'>
               <Avatar
@@ -71,9 +74,11 @@ export default function VideoPost({ post, className }: Props) {
                 </span>
               </div>
             </div>
-            <Button color='white-theme' size='xs' className='xs:hidden'>
-              Follow
-            </Button>
+            {user?.username !== authorUsername && (
+              <Button color='white-theme' size='xs' className='xs:hidden'>
+                Follow
+              </Button>
+            )}
           </div>
           <div className='mt-2 xs:mt-1'>
             <div className='flex items-end pr-10 text-sm xs:pr-0 xs:text-base'>
@@ -100,9 +105,11 @@ export default function VideoPost({ post, className }: Props) {
           </div>
         </div>
         <div className='pr-4'>
-          <Button color='white-theme' size='sm' className='hidden xs:block'>
-            Follow
-          </Button>
+          {user?.username !== authorUsername && (
+            <Button color='white-theme' size='sm' className='hidden xs:block'>
+              Follow
+            </Button>
+          )}
         </div>
       </div>
     </div>
