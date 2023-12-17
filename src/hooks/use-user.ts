@@ -8,6 +8,9 @@ export function useUser() {
   const { data: user, isLoading } = useSWRImmutable<User | null>(
     USER_SWR_KEY.GET_ME,
     () => fetch('/api/me').then((res) => res.json()),
+    {
+      shouldRetryOnError: false,
+    },
   );
 
   return {
