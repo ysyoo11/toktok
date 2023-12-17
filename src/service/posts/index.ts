@@ -29,9 +29,23 @@ export async function getPublicPosts() {
     .then(mapPosts);
 }
 
+export async function getPostById(id: string) {
+  return await client
+    .fetch(
+      groq`*[_type == 'video' && _id == '${id}'][0]{
+    ${simplePostProjection}
+  }`,
+    )
+    .then(setLike);
+}
+
 function mapPosts(posts: SimplePost[]) {
   return posts.map((post: SimplePost) => ({
     ...post,
     likes: post.likes ?? [],
   }));
+}
+
+function setLike(post: SimplePost) {
+  return { ...post, likes: post.likes ?? [] };
 }
