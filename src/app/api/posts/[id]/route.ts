@@ -19,3 +19,5 @@ export async function GET(
 
   return NextResponse.json(video, { status: 200 });
 }
+
+export const dynamic = 'force-dynamic';
