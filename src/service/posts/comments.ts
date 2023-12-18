@@ -12,6 +12,7 @@ export async function getComments(postId: string) {
     .fetch<{ comments: Comment[] }>(
       groq`*[_type == 'video' && _id == '${postId}'][0]{
     "comments": comments[]{
+      ...,
       "key": _key,
       "authorUsername": author->username,
       "authorImage": author->imageUrl,

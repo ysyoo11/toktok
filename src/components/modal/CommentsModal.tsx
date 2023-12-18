@@ -19,7 +19,7 @@ export default function CommentsModal({
   postId,
   totalComments,
 }: Props) {
-  const { comments, mutate, loading } = useComments(postId);
+  const { comments, loading } = useComments(postId);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>

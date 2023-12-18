@@ -7,7 +7,7 @@ import {
 import Link from 'next/link';
 
 import MenuButton from '@/components/MenuButton';
-import { useUser } from '@/hooks/use-user';
+import { useUser } from '@/hooks/useUser';
 
 import ProfileButton from '../ProfileButton';
 

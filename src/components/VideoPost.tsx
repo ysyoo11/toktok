@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
-import { useUser } from '@/hooks/use-user';
+import { useUser } from '@/hooks/useUser';
 import { SimplePost } from '@/model/post';
 
 import Avatar from './Avatar';

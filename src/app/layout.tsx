@@ -40,8 +40,10 @@ export default async function RootLayout({
             <SideNav />
             <div className='mx-auto mt-16 w-full max-w-3xl px-3 lg:pl-0'>
               <SWRConfigContext>
-                {children}
-                {modal}
+                <>
+                  {children}
+                  {modal}
+                </>
               </SWRConfigContext>
             </div>
           </div>

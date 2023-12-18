@@ -6,8 +6,8 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import usePosts from '@/hooks/use-posts';
-import { useUser } from '@/hooks/use-user';
+import usePosts from '@/hooks/usePosts';
+import { useUser } from '@/hooks/useUser';
 
 import ToggleButton from './ui/ToggleButton';
 

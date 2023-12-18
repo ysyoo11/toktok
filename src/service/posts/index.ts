@@ -25,25 +25,23 @@ const simplePostProjection = `
 `;
 
 export async function getPublicPosts() {
-  const posts = await client
+  return await client
     .fetch(
       groq`*[_type == 'video' && visibility == 'public'] | order(_createdAt desc) {
     ${simplePostProjection}
   }`,
     )
     .then(mapPosts);
-  return posts;
 }
 
 export async function getPostById(id: string) {
-  const post = await client
+  return await client
     .fetch(
       groq`*[_type == 'video' && _id == '${id}'][0] {
     ${simplePostProjection}
   }`,
     )
     .then(refinePost);
-  return post;
 }
 
 function mapPosts(posts: RawPost[]) {

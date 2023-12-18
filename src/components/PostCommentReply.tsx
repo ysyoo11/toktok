@@ -1,4 +1,4 @@
-import { useUser } from '@/hooks/use-user';
+import { useUser } from '@/hooks/useUser';
 
 import Avatar from './Avatar';
 

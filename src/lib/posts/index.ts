@@ -8,8 +8,8 @@ export async function getAllPosts(): Promise<SimplePost[]> {
   return videos;
 }
 
-export async function getPostById(videoId: string): Promise<Post> {
-  const { video } = await fetch(`/api/posts/${videoId}`) //
+export async function getPostById(postId: string): Promise<Post> {
+  const { video } = await fetch(`/api/posts/${postId}`, { cache: 'no-store' }) //
     .then((res) => res.json());
   return video;
 }

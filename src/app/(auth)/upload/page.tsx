@@ -7,7 +7,7 @@ import DragDrop from '@/components/ui/DragDrop';
 import Dropdown, { Option } from '@/components/ui/Dropdown';
 import Input from '@/components/ui/Input';
 import VideoPreview from '@/components/VideoPreview';
-import { useUser } from '@/hooks/use-user';
+import { useUser } from '@/hooks/useUser';
 import { createPost } from '@/lib/posts';
 
 const VALID_FILE_TYPES = ['video/mp4', 'video/webm'];

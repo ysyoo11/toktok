@@ -2,8 +2,8 @@ import { HeartIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as SolidHeartIcon } from '@heroicons/react/24/solid';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { useUser } from '@/hooks/use-user';
 import useComments from '@/hooks/useComments';
+import { useUser } from '@/hooks/useUser';
 
 import Avatar from './Avatar';
 import CommentReply from './PostCommentReply';
@@ -15,9 +15,8 @@ type Props = {
   comment: Comment;
 };
 
-export default function PostComment({
-  comment: { authorImage, authorUsername, text, likes, replies },
-}: Props) {
+export default function PostComment({ comment }: Props) {
+  const { authorImage, authorUsername, text, likes, replies } = comment;
   const router = useRouter();
   const pathname = usePathname();
   const postId = pathname.split('/post/')[1];
@@ -27,7 +26,8 @@ export default function PostComment({
   const writtenByAuthor = authorUsername === user?.username;
 
   const handleLike = () => {
-    if (!user) router.push('/signin', { scroll: false });
+    if (!user) return router.push('/signin', { scroll: false });
+    setLike(comment, user.username, liked);
   };
 
   return (
