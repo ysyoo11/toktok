@@ -5,7 +5,7 @@ type Props = {
   className?: string;
   image: string;
   name: string;
-  size?: 'sm' | 'base' | 'lg';
+  size?: 'xs' | 'sm' | 'base' | 'lg';
   hasBorder?: boolean;
 };
 
@@ -21,6 +21,7 @@ export default function Avatar({
       className={clsx(
         'relative shrink-0 overflow-hidden rounded-full',
         {
+          'h-8 w-8': size === 'xs',
           'h-10 w-10': size === 'sm',
           'h-14 w-14': size === 'base',
           'h-16 w-16': size === 'lg',
