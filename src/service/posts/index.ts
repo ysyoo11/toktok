@@ -66,10 +66,10 @@ function refinePost(post: RawPost) {
   };
 }
 
-function getTotalComments(post: RawPost): number {
-  let replies = 0;
-  for (const comment of post.comments) {
-    replies += comment.replies.length;
-  }
-  return post.comments.length + replies;
+function getTotalComments({ comments }: RawPost): number {
+  const replies = comments.reduce(
+    (partialSum, currVal) => partialSum + currVal.replies.length,
+    0,
+  );
+  return comments.length + replies;
 }
