@@ -34,7 +34,6 @@ export default function ModalVideoPlayer({ post }: Props) {
   const [showFullCaption, setShowFullCaption] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
-
   const captionRef = useRef<HTMLParagraphElement>(null);
 
   const togglePlayPause = (e: MouseEvent) => {
