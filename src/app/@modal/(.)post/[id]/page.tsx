@@ -1,10 +1,9 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
-import useSWR from 'swr';
 
 import ModalVideoPlayer from '@/components/ModalVideoPlayer';
-import { SimplePost } from '@/model/post';
+import usePost from '@/hooks/usePost';
 
 type Props = {
   params: {
@@ -13,7 +12,7 @@ type Props = {
 };
 
 export default function PostDetailModal({ params: { id } }: Props) {
-  const { data: post } = useSWR<SimplePost>(`/api/posts/${id}`);
+  const { post } = usePost(id);
   const router = useRouter();
 
   const onClose = useCallback(() => {
