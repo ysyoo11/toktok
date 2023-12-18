@@ -32,8 +32,10 @@ export type Post = {
 };
 
 export type Comment = {
+  key: string;
+  authorUsername: string;
+  authorImage: string;
   text: string;
-  username: string;
   likes: string[];
   replies: Reply[];
 };
