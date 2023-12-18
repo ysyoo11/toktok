@@ -28,7 +28,7 @@ export async function PUT(
   return request(postId, user.id)
     .then(() =>
       NextResponse.json(
-        { message: `Liked the post (id: ${postId})` },
+        { message: `${like ? 'Liked' : 'Disliked'} the post (id: ${postId})` },
         { status: 200 },
       ),
     )
