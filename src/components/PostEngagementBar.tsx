@@ -6,8 +6,8 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import usePosts from '@/hooks/use-posts';
-import { useUser } from '@/hooks/use-user';
+import usePosts from '@/hooks/usePosts';
+import { useUser } from '@/hooks/useUser';
 
 import ToggleButton from './ui/ToggleButton';
 
@@ -29,13 +29,13 @@ export default function PostEngagementBar({ post }: Props) {
   const { setLike } = usePosts();
 
   const handleLike = async (isLiked: boolean) => {
-    if (!user) return router.push('/signin');
+    if (!user) return router.push('/signin', { scroll: false });
 
     setLike(post, user.username, isLiked);
   };
 
-  const handleComment = () => {
-    // TODO: open post detail modal
+  const onCommentClick = () => {
+    router.push(`/post/${post.id}`, { scroll: false });
   };
 
   // TODO:
@@ -56,7 +56,10 @@ export default function PostEngagementBar({ post }: Props) {
         </span>
       </li>
       <li className='flex flex-col items-center'>
-        <button className='rounded-full bg-gray-100 p-1.5 sm:p-2.5'>
+        <button
+          onClick={onCommentClick}
+          className='rounded-full bg-gray-100 p-1.5 sm:p-2.5'
+        >
           <ChatBubbleOvalLeftEllipsisIcon className='h-5 w-5 sm:h-7 sm:w-7' />
         </button>
         <span className='text-sm font-semibold text-gray-600'>{comments}</span>

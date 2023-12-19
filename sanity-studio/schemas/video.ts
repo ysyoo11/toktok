@@ -56,6 +56,11 @@ const video = {
           type: 'document',
           fields: [
             {
+              title: 'Created At',
+              name: 'createdAt',
+              type: 'datetime',
+            },
+            {
               name: 'author',
               title: 'Author',
               type: 'reference',
@@ -75,6 +80,7 @@ const video = {
               title: 'Likes',
               type: 'array',
               of: [{type: 'reference', to: [{type: 'user'}]}],
+              validation: (rule: Rule) => rule.unique(),
             },
             {
               name: 'replies',
@@ -86,6 +92,11 @@ const video = {
                   title: 'Reply',
                   type: 'document',
                   fields: [
+                    {
+                      title: 'Created At',
+                      name: 'createdAt',
+                      type: 'datetime',
+                    },
                     {
                       name: 'author',
                       title: 'Author',
@@ -108,6 +119,7 @@ const video = {
                       title: 'Likes',
                       type: 'array',
                       of: [{type: 'reference', to: [{type: 'user'}]}],
+                      validation: (rule: Rule) => rule.unique(),
                     },
                   ],
                 },

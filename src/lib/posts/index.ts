@@ -1,4 +1,4 @@
-import { VideoPostForm } from '@/app/upload/page';
+import { VideoPostForm } from '@/app/(auth)/upload/page';
 import { Post, SimplePost } from '@/model/post';
 
 export async function getAllPosts(): Promise<SimplePost[]> {
@@ -8,8 +8,8 @@ export async function getAllPosts(): Promise<SimplePost[]> {
   return videos;
 }
 
-export async function getPostById(videoId: string): Promise<Post> {
-  const { video } = await fetch(`/api/posts/${videoId}`) //
+export async function getPostById(postId: string): Promise<Post> {
+  const { video } = await fetch(`/api/posts/${postId}`, { cache: 'no-store' }) //
     .then((res) => res.json());
   return video;
 }

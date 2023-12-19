@@ -17,7 +17,10 @@ export default function ToggleButton({
 }: Props) {
   return (
     <button
-      onClick={() => onToggle(!toggled)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggle(!toggled);
+      }}
       className={clsx(wrapped ? 'rounded-full bg-gray-100 p-1.5 sm:p-2.5' : '')}
     >
       {toggled ? onIcon : offIcon}

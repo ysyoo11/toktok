@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
+import { useUser } from '@/hooks/useUser';
 import { SimplePost } from '@/model/post';
 
 import Avatar from './Avatar';
@@ -16,8 +17,17 @@ type Props = {
 };
 
 export default function VideoPost({ post, className }: Props) {
-  const { authorName, authorUsername, authorImage, caption, music, videoUrl } =
-    post;
+  const {
+    authorName,
+    authorUsername,
+    authorImage,
+    caption,
+    music,
+    videoUrl,
+    id,
+  } = post;
+
+  const { user } = useUser();
 
   const [isCaptionClamped, setIsCaptionClamped] = useState(false);
   const [showFullCaption, setShowFullCaption] = useState(false);
@@ -37,7 +47,10 @@ export default function VideoPost({ post, className }: Props) {
 
   return (
     <div
-      className={clsx('mx-auto flex w-full max-w-lg py-4 sm:py-8', className)}
+      className={clsx(
+        'mx-auto flex w-full max-w-md py-4 sm:mx-auto sm:max-w-lg sm:py-8',
+        className,
+      )}
     >
       <Avatar
         image={authorImage}
@@ -45,7 +58,7 @@ export default function VideoPost({ post, className }: Props) {
         className='hidden xs:block'
       />
       <div className='flex w-full xs:pl-3'>
-        <div className='w-full'>
+        <div className='w-full max-w-sm'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center'>
               <Avatar
@@ -61,9 +74,11 @@ export default function VideoPost({ post, className }: Props) {
                 </span>
               </div>
             </div>
-            <Button color='white-theme' size='xs' className='xs:hidden'>
-              Follow
-            </Button>
+            {user?.username !== authorUsername && (
+              <Button color='white-theme' size='xs' className='xs:hidden'>
+                Follow
+              </Button>
+            )}
           </div>
           <div className='mt-2 xs:mt-1'>
             <div className='flex items-end pr-10 text-sm xs:pr-0 xs:text-base'>
@@ -84,15 +99,17 @@ export default function VideoPost({ post, className }: Props) {
             {/* TODO: */}
             {/* <p>{music}</p> */}
             <div className='mt-2 flex items-end'>
-              <VideoPlayer videoUrl={videoUrl} />
+              <VideoPlayer videoUrl={videoUrl} id={id} />
               <PostEngagementBar post={post} />
             </div>
           </div>
         </div>
         <div className='pr-4'>
-          <Button color='white-theme' size='sm' className='hidden xs:block'>
-            Follow
-          </Button>
+          {user?.username !== authorUsername && (
+            <Button color='white-theme' size='sm' className='hidden xs:block'>
+              Follow
+            </Button>
+          )}
         </div>
       </div>
     </div>

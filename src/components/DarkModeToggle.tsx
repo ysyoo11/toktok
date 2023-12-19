@@ -9,6 +9,7 @@ export default function DarkModeToggle() {
 
   return (
     <Switch
+      as='div'
       checked={enabled}
       onChange={setEnabled}
       className={`${enabled ? 'bg-teal-500' : 'bg-gray-300'}

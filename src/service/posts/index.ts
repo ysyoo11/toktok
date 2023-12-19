@@ -2,7 +2,7 @@ import { groq } from 'next-sanity';
 
 import { client } from '@/service/sanity';
 
-import type { SimplePost } from '@/model/post';
+import type { RawPost } from '@/model/post';
 
 const simplePostProjection = `
   ...,
@@ -16,7 +16,12 @@ const simplePostProjection = `
   "likes": likes[]->username,
   saved,
   music,
-  "comments": count(comments)
+  "comments": comments[]{
+    _key,
+    replies[]{
+      _key,
+    },
+  },
 `;
 
 export async function getPublicPosts() {
@@ -29,9 +34,40 @@ export async function getPublicPosts() {
     .then(mapPosts);
 }
 
-function mapPosts(posts: SimplePost[]) {
-  return posts.map((post: SimplePost) => ({
+export async function getPostById(id: string) {
+  return await client
+    .fetch(
+      groq`*[_type == 'video' && _id == '${id}'][0] {
+    ${simplePostProjection}
+  }`,
+    )
+    .then(refinePost);
+}
+
+function mapPosts(posts: RawPost[]) {
+  return posts.map((post: RawPost) => {
+    const comments = getTotalComments(post);
+    return {
+      ...post,
+      likes: post.likes ?? [],
+      comments,
+    };
+  });
+}
+
+function refinePost(post: RawPost) {
+  const comments = getTotalComments(post);
+  return {
     ...post,
     likes: post.likes ?? [],
-  }));
+    comments,
+  };
+}
+
+function getTotalComments({ comments }: RawPost): number {
+  const replies = comments.reduce(
+    (partialSum, currVal) => partialSum + currVal.replies.length,
+    0,
+  );
+  return comments.length + replies;
 }

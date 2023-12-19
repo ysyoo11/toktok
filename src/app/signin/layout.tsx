@@ -7,9 +7,10 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default async function AuthLayout({ children }: Props) {
+export default async function SignInLayout({ children }: Props) {
   const session = await getServerSession(authOptions);
   const user = session?.user;
+
   if (user) {
     redirect('/');
   }

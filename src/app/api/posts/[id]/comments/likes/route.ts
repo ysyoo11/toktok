@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 
 import { authOptions } from '@/app/api/auth/[...nextauth]/options';
-import { dislikePost, likePost } from '@/service/posts/like';
+import { dislikeComment, likeComment } from '@/service/posts/like';
 
 export async function PUT(
   req: NextRequest,
@@ -17,23 +17,29 @@ export async function PUT(
 
   const postId = params.id;
 
-  const { like } = await req.json();
+  const { like, commentKey } = await req.json();
 
-  if (!postId || like === undefined) {
+  if (!postId || like === undefined || commentKey === undefined) {
     return new Response('Bad Request', { status: 400 });
   }
 
-  const request = like ? likePost : dislikePost;
+  const request = like ? likeComment : dislikeComment;
 
-  return request(postId, user.id)
+  return request(postId, commentKey, user.id)
     .then(() =>
       NextResponse.json(
-        { message: `${like ? 'Liked' : 'Disliked'} the post (id: ${postId})` },
+        {
+          message: `${
+            like ? 'Liked' : 'Disliked'
+          } the comment (key: ${commentKey})`,
+        },
         { status: 200 },
       ),
     )
-    .catch((error) => {
-      console.error(error);
-      return new Response(JSON.stringify(error), { status: 500 });
+    .catch((err) => {
+      console.error(err);
+      return new Response(JSON.stringify(err), { status: 500 });
     });
 }
+
+export const dynamic = 'force-dynamic';

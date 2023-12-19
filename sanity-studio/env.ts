@@ -22,7 +22,7 @@ export const projectId = assertValue(
   'Missing environment variable: NEXT_PUBLIC_SANITY_PROJECT_ID',
 )
 
-export const useCdn = true
+export const useCdn = false
 
 export const token = ENV.SANITY_STUDIO_API_TOKEN
 

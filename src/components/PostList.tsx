@@ -1,6 +1,6 @@
 'use client';
 
-import usePosts from '@/hooks/use-posts';
+import usePosts from '@/hooks/usePosts';
 
 import VideoPost from './VideoPost';
 

@@ -1,14 +1,16 @@
-import { useSession } from 'next-auth/react';
 import useSWRImmutable from 'swr/immutable';
+
+import { USER_SWR_KEY } from '@/swr';
 
 import type { User } from '@/model/user';
 
 export function useUser() {
-  const { data: session, status } = useSession();
-
-  const { data: user, isLoading } = useSWRImmutable<User>(
-    `${session?.user.username}-${status}`,
+  const { data: user, isLoading } = useSWRImmutable<User | null>(
+    USER_SWR_KEY.GET_ME,
     () => fetch('/api/me').then((res) => res.json()),
+    {
+      shouldRetryOnError: false,
+    },
   );
 
   return {
