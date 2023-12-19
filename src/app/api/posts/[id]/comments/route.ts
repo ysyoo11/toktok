@@ -10,3 +10,5 @@ export async function GET(
 
   return NextResponse.json(comments, { status: 200 });
 }
+
+export const dynamic = 'force-dynamic';

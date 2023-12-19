@@ -75,6 +75,7 @@ const video = {
               title: 'Likes',
               type: 'array',
               of: [{type: 'reference', to: [{type: 'user'}]}],
+              validation: (rule: Rule) => rule.unique(),
             },
             {
               name: 'replies',
@@ -108,6 +109,7 @@ const video = {
                       title: 'Likes',
                       type: 'array',
                       of: [{type: 'reference', to: [{type: 'user'}]}],
+                      validation: (rule: Rule) => rule.unique(),
                     },
                   ],
                 },
