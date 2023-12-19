@@ -1,29 +1,46 @@
 import { HeartIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as SolidHeartIcon } from '@heroicons/react/24/solid';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 import useComments from '@/hooks/useComments';
+import usePost from '@/hooks/usePost';
+import useReplies from '@/hooks/useReplies';
 import { useUser } from '@/hooks/useUser';
 
 import Avatar from './Avatar';
-import CommentReply from './PostCommentReply';
+import PostCommentReply from './PostCommentReply';
 import ToggleButton from './ui/ToggleButton';
 
 import type { Comment } from '@/model/post';
 
 type Props = {
   comment: Comment;
+  postId: string;
 };
 
-export default function PostComment({ comment }: Props) {
-  const { authorImage, authorUsername, text, likes, replies } = comment;
+export default function PostComment({ comment, postId }: Props) {
+  const {
+    authorImage,
+    authorUsername,
+    text,
+    likes,
+    key: commentKey,
+    totalReplies,
+  } = comment;
+
+  const { replies, loadMore, isEmpty, isReachingEnd, isLoading } = useReplies({
+    postId,
+    commentKey,
+  });
+
   const router = useRouter();
-  const pathname = usePathname();
-  const postId = pathname.split('/post/')[1];
   const { setLike } = useComments(postId);
   const { user } = useUser();
+  const { post } = usePost(postId);
+  if (!post) return <p>loading...</p>;
   const liked = user ? likes.includes(user.username) : false;
-  const writtenByAuthor = authorUsername === user?.username;
+  const writtenByAuthor = authorUsername === post.authorUsername;
 
   const handleLike = (isLiked: boolean) => {
     if (!user) return router.push('/signin', { scroll: false });
@@ -60,12 +77,26 @@ export default function PostComment({ comment }: Props) {
               </div>
             </div>
             {replies.length > 0 && (
-              <ul className='mt-4'>
+              <ul className='mt-4 w-full space-y-4'>
                 {replies.map((reply) => (
-                  <CommentReply key={reply.key} reply={reply} />
+                  <PostCommentReply
+                    key={reply.key}
+                    reply={reply}
+                    postAuthorUsername={post.authorUsername}
+                  />
                 ))}
               </ul>
             )}
+            {!isEmpty && !isLoading && !isReachingEnd && (
+              <button
+                onClick={loadMore}
+                className='mt-2 w-full py-1 text-start text-gray-500'
+              >
+                &mdash;&nbsp;View {totalReplies - replies.length} more
+              </button>
+            )}
+            {/* TODO: Create better loading state UI */}
+            {isLoading && <p>Loading...</p>}
           </div>
         </div>
       </div>
