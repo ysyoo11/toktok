@@ -16,7 +16,7 @@ export type RawPost = Omit<SimplePost, 'comments'> & {
 
 export type Post = {
   id: string;
-  createdAt: Date;
+  createdAt: string;
   videoUrl: string;
   caption: string;
   authorUsername: string;
@@ -38,6 +38,8 @@ export type Comment = {
   text: string;
   likes: string[];
   replies: Reply[];
+  createdAt: string;
+  totalReplies: number;
 };
 
 export type Reply = Omit<Comment, 'replies'>;
