@@ -6,7 +6,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { MouseEvent, useState } from 'react';
 
-import usePost from '@/hooks/usePost';
+import usePosts from '@/hooks/usePosts';
 import { useUser } from '@/hooks/useUser';
 
 import CommentsModal from './modal/CommentsModal';
@@ -27,7 +27,7 @@ export default function PostDetailMobileEngagementBar({ post }: Props) {
 
   const router = useRouter();
   const { user } = useUser();
-  const { setLike } = usePost(post.id);
+  const { setLike } = usePosts();
   const liked = user ? likes.includes(user.username) : false;
   const isFollowed = false; // TODO:
 

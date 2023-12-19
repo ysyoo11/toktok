@@ -25,9 +25,9 @@ export default function PostComment({ comment }: Props) {
   const liked = user ? likes.includes(user.username) : false;
   const writtenByAuthor = authorUsername === user?.username;
 
-  const handleLike = () => {
+  const handleLike = (isLiked: boolean) => {
     if (!user) return router.push('/signin', { scroll: false });
-    setLike(comment, user.username, liked);
+    setLike(comment, user.username, isLiked);
   };
 
   return (
