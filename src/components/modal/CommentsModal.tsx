@@ -59,10 +59,10 @@ export default function CommentsModal({
                 </div>
                 {loading && <p className='text-center'>Loading comments...</p>}
                 {comments && (
-                  <ul className='w-full px-4'>
+                  <ul className='h-max max-h-80 w-full overflow-y-auto px-4'>
                     {comments.map((comment) => (
                       <li key={comment.key}>
-                        <PostComment comment={comment} />
+                        <PostComment comment={comment} postId={postId} />
                       </li>
                     ))}
                   </ul>
