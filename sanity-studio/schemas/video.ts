@@ -56,6 +56,11 @@ const video = {
           type: 'document',
           fields: [
             {
+              title: 'Created At',
+              name: 'createdAt',
+              type: 'datetime',
+            },
+            {
               name: 'author',
               title: 'Author',
               type: 'reference',
@@ -87,6 +92,11 @@ const video = {
                   title: 'Reply',
                   type: 'document',
                   fields: [
+                    {
+                      title: 'Created At',
+                      name: 'createdAt',
+                      type: 'datetime',
+                    },
                     {
                       name: 'author',
                       title: 'Author',
