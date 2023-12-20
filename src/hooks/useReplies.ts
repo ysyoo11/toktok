@@ -15,7 +15,7 @@ type Props = {
 export default function useReplies({ postId, commentKey }: Props) {
   const [replies, setReplies] = useState<Reply[]>([]);
   const [page, setPage] = useState(0);
-  const [lastReplyDate, setLastReplyDate] = useState<string | null>('');
+  const [lastReplyDate, setLastReplyDate] = useState<string>('0');
   const [newRepliesTemp, setNewRepliesTemp] = useState<Reply[]>([]);
 
   const { trigger, isMutating } = useSWRMutation(
@@ -44,7 +44,7 @@ export default function useReplies({ postId, commentKey }: Props) {
       const lastReply = replies[replies.length - 1];
       setLastReplyDate(lastReply.createdAt);
     } else {
-      setLastReplyDate(null);
+      setLastReplyDate('0');
     }
   }, [replies]);
 
