@@ -29,7 +29,13 @@ export default function PostComment({ comment, postId }: Props) {
     totalReplies,
   } = comment;
 
-  const { replies, loadMore, isEmpty, isReachingEnd, isLoading } = useReplies({
+  const {
+    replies,
+    loadMore,
+    isReachingEnd,
+    isLoading,
+    setLike: setReplyLike,
+  } = useReplies({
     postId,
     commentKey,
   });
@@ -38,6 +44,7 @@ export default function PostComment({ comment, postId }: Props) {
   const { setLike } = useComments(postId);
   const { user } = useUser();
   const { post } = usePost(postId);
+
   if (!post) return <p>loading...</p>;
   const liked = user ? likes.includes(user.username) : false;
   const writtenByAuthor = authorUsername === post.authorUsername;
@@ -83,19 +90,21 @@ export default function PostComment({ comment, postId }: Props) {
                     key={reply.key}
                     reply={reply}
                     postAuthorUsername={post.authorUsername}
+                    setLike={setReplyLike}
                   />
                 ))}
               </ul>
             )}
-            {!isEmpty && !isLoading && !isReachingEnd && (
+            {totalReplies > 0 && !isLoading && !isReachingEnd && (
               <button
                 onClick={loadMore}
-                className='mt-2 w-full py-1 text-start text-gray-500'
+                disabled={isLoading}
+                className='my-2 w-full py-1 text-start text-gray-500'
               >
-                &mdash;&nbsp;View {totalReplies - replies.length} more
+                {!isLoading && `⸺ View ${totalReplies - replies.length} more`}
               </button>
             )}
-            {isLoading && <Loading className='w-10' />}
+            {isLoading && <Loading className='my-1 w-10' />}
           </div>
         </div>
       </div>
