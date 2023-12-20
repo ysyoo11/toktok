@@ -23,6 +23,7 @@ type Props = {
   post: SimplePost;
 };
 
+// TODO: Refactor - reduce JS bundle size
 export default function ModalVideoPlayer({ post }: Props) {
   const { videoUrl, authorImage, authorName, authorUsername, caption } = post;
   const [isPlaying, setIsPlaying] = useState(true);
@@ -103,9 +104,9 @@ export default function ModalVideoPlayer({ post }: Props) {
     >
       <div className='pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
         {isPlaying ? (
-          <PlayIcon className='animate-fade-out h-32 w-32 text-white' />
+          <PlayIcon className='h-32 w-32 animate-fade-out text-white' />
         ) : (
-          <PauseIcon className='animate-fade-out h-32 w-32 text-white' />
+          <PauseIcon className='h-32 w-32 animate-fade-out text-white' />
         )}
       </div>
       <video
