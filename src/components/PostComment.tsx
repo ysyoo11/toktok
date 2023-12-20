@@ -1,7 +1,6 @@
 import { HeartIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as SolidHeartIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 import useComments from '@/hooks/useComments';
 import usePost from '@/hooks/usePost';
@@ -10,6 +9,7 @@ import { useUser } from '@/hooks/useUser';
 
 import Avatar from './Avatar';
 import PostCommentReply from './PostCommentReply';
+import Loading from './ui/Loading';
 import ToggleButton from './ui/ToggleButton';
 
 import type { Comment } from '@/model/post';
@@ -96,7 +96,7 @@ export default function PostComment({ comment, postId }: Props) {
               </button>
             )}
             {/* TODO: Create better loading state UI */}
-            {isLoading && <p>Loading...</p>}
+            {isLoading && <Loading className='w-10' />}
           </div>
         </div>
       </div>
