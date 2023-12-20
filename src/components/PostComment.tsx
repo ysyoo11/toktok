@@ -95,7 +95,6 @@ export default function PostComment({ comment, postId }: Props) {
                 &mdash;&nbsp;View {totalReplies - replies.length} more
               </button>
             )}
-            {/* TODO: Create better loading state UI */}
             {isLoading && <Loading className='w-10' />}
           </div>
         </div>
