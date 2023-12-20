@@ -66,7 +66,8 @@ function refinePost(post: RawPost) {
 
 function getTotalComments({ comments }: RawPost): number {
   const replies = comments.reduce(
-    (partialSum, currVal) => partialSum + currVal.replies.length,
+    (partialSum, currVal) =>
+      partialSum + (currVal.replies ? currVal.replies.length : 0),
     0,
   );
   return comments.length + replies;

@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
-import useSWRMutation from 'swr/mutation';
+import { useEffect, useRef, useState } from 'react';
+import { Arguments, mutate as globalMutate } from 'swr';
+import useSWRImmutable from 'swr/immutable';
 
+import { updateReplyLike } from '@/lib/posts/like';
 import { getReplies } from '@/lib/posts/replies';
 import { POLICY } from '@/policy';
 import { VIDEO_SWR_KEY } from '@/swr';
@@ -13,50 +15,77 @@ type Props = {
 };
 
 export default function useReplies({ postId, commentKey }: Props) {
-  const [replies, setReplies] = useState<Reply[]>([]);
-  const [page, setPage] = useState(0);
-  const [lastReplyDate, setLastReplyDate] = useState<string | null>('');
-  const [newRepliesTemp, setNewRepliesTemp] = useState<Reply[]>([]);
+  const REPLY_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENT_REPLIES}-${postId}-${commentKey}`;
 
-  const { trigger, isMutating } = useSWRMutation(
-    `${VIDEO_SWR_KEY.GET_POST_COMMENT_REPLIES}-${postId}-${commentKey}-${page}`,
-    async () => {
-      const newReplies = await getReplies({
+  const [fetchable, setFetchable] = useState(false);
+  const [page, setPage] = useState(0);
+  const [replies, setReplies] = useState<Reply[]>([]);
+  const lastReplyDateRef = useRef('0');
+
+  const { data, isLoading, isValidating } = useSWRImmutable(
+    fetchable ? `${REPLY_SWR_BASE_KEY}-${page}` : null,
+    () => {
+      return getReplies({
         postId,
         commentKey,
-        lastReplyDate,
+        lastReplyDate: lastReplyDateRef.current,
       });
-      return newReplies;
     },
   );
 
   const loadMore = async () => {
-    const newReplies = await trigger();
-    setNewRepliesTemp(newReplies);
-    if (newReplies && newReplies.length > 0) {
-      setReplies((prev) => [...prev, ...newReplies]);
-      setPage((prev) => prev + 1);
+    if (!fetchable) {
+      setFetchable(true);
+      return;
     }
+    setPage((prev) => prev + 1);
   };
 
   useEffect(() => {
     if (replies.length > 0) {
       const lastReply = replies[replies.length - 1];
-      setLastReplyDate(lastReply.createdAt);
+      lastReplyDateRef.current = lastReply.createdAt;
     } else {
-      setLastReplyDate(null);
+      lastReplyDateRef.current = '0';
     }
   }, [replies]);
 
-  const isEmpty = page > 0 && replies.length === 0;
-  const isReachingEnd =
-    isEmpty || (page > 0 && newRepliesTemp.length < POLICY.COMMENT_FETCH_LIMIT);
+  const isReachingEnd = data && data.length < POLICY.COMMENT_FETCH_LIMIT;
+
+  const setLike = async (reply: Reply, username: string, like: boolean) => {
+    const newReply = {
+      ...reply,
+      likes: like
+        ? [...reply.likes, username]
+        : reply.likes.filter((item) => item !== username),
+    };
+
+    const newReplies = replies.map((r) => (r.key === reply.key ? newReply : r));
+    setReplies(newReplies);
+
+    await globalMutate(
+      (key: Arguments) =>
+        typeof key === 'string' && key.startsWith(REPLY_SWR_BASE_KEY),
+      updateReplyLike({ postId, commentKey, replyKey: reply.key, like }),
+      {
+        populateCache: false,
+        revalidate: false,
+        rollbackOnError: true,
+      },
+    );
+  };
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setReplies((prev) => [...prev, ...data]);
+    }
+  }, [data]);
 
   return {
     replies,
     loadMore,
-    isLoading: isMutating,
-    isEmpty,
+    isLoading: isLoading || isValidating,
     isReachingEnd,
+    setLike,
   };
 }

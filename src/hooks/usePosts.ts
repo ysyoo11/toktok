@@ -1,6 +1,6 @@
 import useSWR, { useSWRConfig } from 'swr';
 
-import { updateLike } from '@/lib/posts/like';
+import { updatePostLike } from '@/lib/posts/like';
 import { SimplePost } from '@/model/post';
 
 export default function usePosts() {
@@ -23,7 +23,7 @@ export default function usePosts() {
       rollbackOnError: true,
     });
 
-    return mutate(updateLike(post.id, like), {
+    return mutate(updatePostLike(post.id, like), {
       optimisticData: newPosts,
       populateCache: false,
       revalidate: false,

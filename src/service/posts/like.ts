@@ -33,7 +33,7 @@ export async function likeComment(
 ) {
   await client
     .patch(postId)
-    .setIfMissing({ [`comments[_key==\"${commentKey}"].likes`]: [] })
+    .setIfMissing({ [`comments[_key=="${commentKey}"].likes`]: [] })
     .append(`comments[_key==\"${commentKey}"].likes`, [
       {
         _type: 'reference',
@@ -50,6 +50,44 @@ export async function dislikeComment(
 ) {
   await client
     .patch(postId)
-    .unset([`comments[_key==\"${commentKey}"].likes[_ref=="${uid}"]`])
+    .unset([`comments[_key=="${commentKey}"].likes[_ref=="${uid}"]`])
+    .commit();
+}
+
+type LikeReplyProps = {
+  postId: string;
+  commentKey: string;
+  replyKey: string;
+  uid: string;
+};
+export async function likeReply({
+  postId,
+  commentKey,
+  replyKey,
+  uid,
+}: LikeReplyProps) {
+  const targetReplyLikes = `comments[_key=="${commentKey}"].replies[_key=="${replyKey}"].likes`;
+  await client
+    .patch(postId)
+    .setIfMissing({ [targetReplyLikes]: [] })
+    .append(targetReplyLikes, [
+      {
+        _type: 'reference',
+        _ref: uid,
+      },
+    ])
+    .commit({ autoGenerateArrayKeys: true });
+}
+export async function dislikeReply({
+  postId,
+  commentKey,
+  replyKey,
+  uid,
+}: LikeReplyProps) {
+  await client
+    .patch(postId)
+    .unset([
+      `comments[_key=="${commentKey}"].replies[_key=="${replyKey}"].likes[_ref=="${uid}"]`,
+    ])
     .commit();
 }

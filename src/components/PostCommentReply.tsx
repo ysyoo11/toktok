@@ -12,20 +12,23 @@ import type { Reply } from '@/model/post';
 type Props = {
   reply: Reply;
   postAuthorUsername: string;
+  setLike: (reply: Reply, username: string, like: boolean) => Promise<void>;
 };
 
 export default function PostCommentReply({
-  reply: { authorImage, authorUsername, text, likes },
+  reply,
   postAuthorUsername,
+  setLike,
 }: Props) {
+  const { authorImage, authorUsername, text, likes, key } = reply;
   const router = useRouter();
   const { user } = useUser();
   const liked = user ? likes.includes(user.username) : false;
   const writtenByAuthor = authorUsername === postAuthorUsername;
 
-  // TODO: Handle reply like
   const handleLike = (isLiked: boolean) => {
     if (!user) return router.push('/signin', { scroll: false });
+    setLike(reply, user.username, isLiked);
   };
 
   return (
