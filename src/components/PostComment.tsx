@@ -2,7 +2,6 @@ import { HeartIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as SolidHeartIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
 
-import useComments from '@/hooks/useComments';
 import usePost from '@/hooks/usePost';
 import useReplies from '@/hooks/useReplies';
 import { useUser } from '@/hooks/useUser';
@@ -17,9 +16,10 @@ import type { Comment } from '@/model/post';
 type Props = {
   comment: Comment;
   postId: string;
+  setLike: (comment: Comment, username: string, like: boolean) => Promise<void>;
 };
 
-export default function PostComment({ comment, postId }: Props) {
+export default function PostComment({ comment, postId, setLike }: Props) {
   const {
     authorImage,
     authorUsername,
@@ -41,7 +41,6 @@ export default function PostComment({ comment, postId }: Props) {
   });
 
   const router = useRouter();
-  const { setLike } = useComments(postId);
   const { user } = useUser();
   const { post } = usePost(postId);
 
