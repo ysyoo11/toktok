@@ -14,7 +14,7 @@ export async function getReplies(
   const replies = await client
     .fetch<{ replies: Reply[] }>(
       groq`*[_type == 'video' && _id == '${postId}'][0]{
-    "replies": comments[_key == '${commentKey}'].replies[createdAt > $lastReplyDate][0...${POLICY.COMMENT_FETCH_LIMIT}]{
+    "replies": comments[_key == '${commentKey}'].replies[createdAt > $lastReplyDate][0...${POLICY.REPLY_FETCH_LIMIT}]{
       ...,
       "key": _key,
       "authorUsername": author->username,

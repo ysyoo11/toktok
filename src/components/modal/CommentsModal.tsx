@@ -1,10 +1,12 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Fragment } from 'react';
+import { InView } from 'react-intersection-observer';
 
 import useComments from '@/hooks/useComments';
 
 import PostComment from '../PostComment';
+import Loading from '../ui/Loading';
 
 type Props = {
   isOpen: boolean;
@@ -19,7 +21,8 @@ export default function CommentsModal({
   postId,
   totalComments,
 }: Props) {
-  const { comments, loading } = useComments(postId);
+  const { comments, loading, loadMore, isReachingEnd, setLike } =
+    useComments(postId);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -59,12 +62,28 @@ export default function CommentsModal({
                 </div>
                 {loading && <p className='text-center'>Loading comments...</p>}
                 {comments && (
-                  <ul className='h-max max-h-80 w-full space-y-4 overflow-y-auto px-4'>
+                  <ul className='h-max max-h-96 w-full space-y-4 overflow-y-auto px-4'>
                     {comments.map((comment) => (
                       <li key={comment.key}>
-                        <PostComment comment={comment} postId={postId} />
+                        <PostComment
+                          comment={comment}
+                          postId={postId}
+                          setLike={setLike}
+                        />
                       </li>
                     ))}
+                    {loading && <Loading className='w-12' />}
+                    {!isReachingEnd && (
+                      <div className='bg-red-300 py-2'>
+                        <InView
+                          as='div'
+                          rootMargin='24px'
+                          onChange={(inView) => {
+                            if (inView) loadMore();
+                          }}
+                        />
+                      </div>
+                    )}
                   </ul>
                 )}
               </Dialog.Panel>

@@ -50,7 +50,7 @@ export default function useReplies({ postId, commentKey }: Props) {
     }
   }, [replies]);
 
-  const isReachingEnd = data && data.length < POLICY.COMMENT_FETCH_LIMIT;
+  const isReachingEnd = data && data.length < POLICY.REPLY_FETCH_LIMIT;
 
   const setLike = async (reply: Reply, username: string, like: boolean) => {
     const newReply = {
