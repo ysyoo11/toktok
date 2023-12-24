@@ -87,7 +87,7 @@ export default function CommentsModal({
                     )}
                   </ul>
                 )}
-                <CommentForm />
+                <CommentForm postId={postId} />
               </Dialog.Panel>
             </Transition.Child>
           </div>

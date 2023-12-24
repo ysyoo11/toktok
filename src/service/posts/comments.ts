@@ -28,6 +28,26 @@ export async function getComments(
   return comments;
 }
 
+export async function postComment(
+  postId: string,
+  uid: string,
+  comment: string,
+) {
+  return await client
+    .patch(postId)
+    .setIfMissing({ comments: [] })
+    .append('comments', [
+      {
+        createdAt: new Date(),
+        author: { _type: 'reference', _ref: uid },
+        text: comment,
+        likes: [],
+        replies: [],
+      },
+    ])
+    .commit({ autoGenerateArrayKeys: true });
+}
+
 function mapComments(comments: Comment[]) {
   return comments.map((comment) => ({
     ...comment,
