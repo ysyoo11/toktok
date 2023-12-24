@@ -6,7 +6,7 @@ import { ButtonHTMLAttributes } from 'react';
 const colorClass = {
   pink: 'bg-theme-pink-100 text-white hover:bg-theme-pink-200',
   'white-theme':
-    'bg-white border-theme-pink-100 text-theme-pink-100 hover:bg-theme-pink-100/10 border',
+    'bg-white border-theme-pink-100 text-theme-pink-100 hover:bg-theme-pink-100/10 border disabled:border-transparent',
   white: 'bg-white hover:bg-gray-100 border',
 } as const;
 
