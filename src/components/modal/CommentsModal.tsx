@@ -5,6 +5,7 @@ import { InView } from 'react-intersection-observer';
 
 import useComments from '@/hooks/useComments';
 
+import CommentForm from '../CommentForm';
 import PostComment from '../PostComment';
 import Loading from '../ui/Loading';
 
@@ -86,6 +87,7 @@ export default function CommentsModal({
                     )}
                   </ul>
                 )}
+                <CommentForm postId={postId} />
               </Dialog.Panel>
             </Transition.Child>
           </div>
