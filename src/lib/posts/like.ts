@@ -10,7 +10,7 @@ export async function updatePostLike(postId: string, like: boolean) {
 
 export async function updateCommentLike(
   postId: string,
-  commentKey: string,
+  commentId: string,
   like: boolean,
 ) {
   return await fetch(`/api/posts/${postId}/comments/likes`, {
@@ -18,7 +18,7 @@ export async function updateCommentLike(
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ commentKey, like }),
+    body: JSON.stringify({ commentId, like }),
   }).then((res) => res.json());
 }
 

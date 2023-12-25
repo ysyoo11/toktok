@@ -35,9 +35,9 @@ export async function POST(
   }
 
   return await postComment(postId, uid, comment)
-    .then(() =>
+    .then((data) =>
       NextResponse.json(
-        { message: 'Successfully posted the comment' },
+        { message: 'Successfully posted the comment', data },
         { status: 201 },
       ),
     )

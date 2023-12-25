@@ -56,6 +56,11 @@ const video = {
           type: 'document',
           fields: [
             {
+              title: 'ID',
+              name: 'id',
+              type: 'string',
+            },
+            {
               title: 'Created At',
               name: 'createdAt',
               type: 'datetime',
@@ -126,6 +131,12 @@ const video = {
               ],
             },
           ],
+          preview: {
+            select: {
+              title: 'text',
+              subtitle: 'author.username',
+            },
+          },
         },
       ],
     },

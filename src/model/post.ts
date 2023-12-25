@@ -32,6 +32,7 @@ export type Post = {
 };
 
 export type Comment = {
+  id: string;
   key: string;
   authorUsername: string;
   authorImage: string;

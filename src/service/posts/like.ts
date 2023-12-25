@@ -28,13 +28,13 @@ export async function dislikePost(postId: string, uid: string) {
 
 export async function likeComment(
   postId: string,
-  commentKey: string,
+  commentId: string,
   uid: string,
 ) {
   await client
     .patch(postId)
-    .setIfMissing({ [`comments[_key=="${commentKey}"].likes`]: [] })
-    .append(`comments[_key==\"${commentKey}"].likes`, [
+    .setIfMissing({ [`comments[id=="${commentId}"].likes`]: [] })
+    .append(`comments[id==\"${commentId}"].likes`, [
       {
         _type: 'reference',
         _ref: uid,
@@ -45,12 +45,12 @@ export async function likeComment(
 
 export async function dislikeComment(
   postId: string,
-  commentKey: string,
+  commentId: string,
   uid: string,
 ) {
   await client
     .patch(postId)
-    .unset([`comments[_key=="${commentKey}"].likes[_ref=="${uid}"]`])
+    .unset([`comments[id=="${commentId}"].likes[_ref=="${uid}"]`])
     .commit();
 }
 
