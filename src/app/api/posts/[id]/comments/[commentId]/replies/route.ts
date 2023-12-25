@@ -6,13 +6,13 @@ import { getReplies, postReply } from '@/service/posts/replies';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string; key: string } },
+  { params }: { params: { id: string; commentId: string } },
 ) {
-  const { id: postId, key: commentKey } = params;
+  const { id: postId, commentId } = params;
   const searchParams = req.nextUrl.searchParams;
   const lastReplyDate = searchParams.get('lastReplyDate');
 
-  const replies = await getReplies(postId, commentKey, lastReplyDate).catch(
+  const replies = await getReplies(postId, commentId, lastReplyDate).catch(
     (err) => {
       console.error(err);
       return new Response('Server Error', { status: 500 });
@@ -34,12 +34,12 @@ export async function POST(
   }
 
   const { reply } = await req.json();
-  const { id: postId, key: commentKey } = params;
-  if (!reply || !postId || !commentKey) {
+  const { id: postId, key: commentId } = params;
+  if (!reply || !postId || !commentId) {
     return new Response('Bad Reqeust', { status: 400 });
   }
 
-  return await postReply({ postId, commentKey, uid, reply })
+  return await postReply({ postId, commentId, uid, reply })
     .then(() =>
       NextResponse.json(
         { message: 'Successfully posted the reply' },

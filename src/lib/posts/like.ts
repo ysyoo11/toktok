@@ -24,18 +24,18 @@ export async function updateCommentLike(
 
 type ReplyLikeProps = {
   postId: string;
-  commentKey: string;
+  commentId: string;
   replyKey: string;
   like: boolean;
 };
 export async function updateReplyLike({
   postId,
-  commentKey,
+  commentId,
   replyKey,
   like,
 }: ReplyLikeProps) {
   return await fetch(
-    `/api/posts/${postId}/comments/${commentKey}/replies/likes`,
+    `/api/posts/${postId}/comments/${commentId}/replies/likes`,
     {
       method: 'PUT',
       body: JSON.stringify({ replyKey, like }),

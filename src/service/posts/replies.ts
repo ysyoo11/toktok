@@ -8,13 +8,13 @@ import type { Reply } from '@/model/post';
 
 export async function getReplies(
   postId: string,
-  commentKey: string,
+  commentId: string,
   lastReplyDate: string | null,
 ) {
   const replies = await client
     .fetch<{ replies: Reply[] }>(
       groq`*[_type == 'video' && _id == '${postId}'][0]{
-    "replies": comments[_key == '${commentKey}'].replies[createdAt > $lastReplyDate][0...${POLICY.REPLY_FETCH_LIMIT}]{
+    "replies": comments[id == '${commentId}'].replies[createdAt > $lastReplyDate][0...${POLICY.REPLY_FETCH_LIMIT}]{
       ...,
       "key": _key,
       "authorUsername": author->username,
@@ -32,20 +32,20 @@ export async function getReplies(
 
 type PostReplyProps = {
   postId: string;
-  commentKey: string;
+  commentId: string;
   uid: string;
   reply: string;
 };
 export async function postReply({
   postId,
-  commentKey,
+  commentId,
   uid,
   reply,
 }: PostReplyProps) {
   const result = await client
     .patch(postId)
-    .setIfMissing({ [`comments[_key=="${commentKey}"].replies`]: [] })
-    .append(`comments[_key=="${commentKey}"].replies`, [
+    .setIfMissing({ [`comments[id=="${commentId}"].replies`]: [] })
+    .append(`comments[id=="${commentId}"].replies`, [
       {
         createdAt: new Date(),
         author: { _type: 'reference', _ref: uid },

@@ -11,11 +11,11 @@ import type { Reply } from '@/model/post';
 
 type Props = {
   postId: string;
-  commentKey: string;
+  commentId: string;
 };
 
-export default function useReplies({ postId, commentKey }: Props) {
-  const REPLY_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENT_REPLIES}-${postId}-${commentKey}`;
+export default function useReplies({ postId, commentId }: Props) {
+  const REPLY_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENT_REPLIES}-${postId}-${commentId}`;
 
   const [fetchable, setFetchable] = useState(false);
   const [page, setPage] = useState(0);
@@ -27,7 +27,7 @@ export default function useReplies({ postId, commentKey }: Props) {
     () => {
       return getReplies({
         postId,
-        commentKey,
+        commentId,
         lastReplyDate: lastReplyDateRef.current,
       });
     },
@@ -66,7 +66,7 @@ export default function useReplies({ postId, commentKey }: Props) {
     await globalMutate(
       (key: Arguments) =>
         typeof key === 'string' && key.startsWith(REPLY_SWR_BASE_KEY),
-      updateReplyLike({ postId, commentKey, replyKey: reply.key, like }),
+      updateReplyLike({ postId, commentId, replyKey: reply.key, like }),
       {
         populateCache: false,
         revalidate: false,

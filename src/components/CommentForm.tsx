@@ -9,7 +9,7 @@ import Avatar from './Avatar';
 type Props = {
   postId: string;
   mode: 'reply' | 'comment';
-  replyTarget: { username: string; commentKey: string };
+  replyTarget: { username: string; commentId: string };
   addComment: (user: User, comment: string) => Promise<void>;
   scrollToBottom: () => void;
 };
@@ -17,7 +17,7 @@ type Props = {
 export default function CommentForm({
   postId,
   mode,
-  replyTarget: { username, commentKey },
+  replyTarget: { username, commentId },
   addComment,
   scrollToBottom,
 }: Props) {

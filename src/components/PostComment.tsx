@@ -20,7 +20,7 @@ type Props = {
   setLike: (comment: Comment, username: string, like: boolean) => Promise<void>;
   setMode: Dispatch<SetStateAction<'comment' | 'reply'>>;
   setReplyTarget: Dispatch<
-    SetStateAction<{ username: string; commentKey: string }>
+    SetStateAction<{ username: string; commentId: string }>
   >;
 };
 
@@ -36,8 +36,8 @@ export default function PostComment({
     authorUsername,
     text,
     likes,
-    key: commentKey,
     totalReplies,
+    id: commentId,
   } = comment;
 
   const {
@@ -48,7 +48,7 @@ export default function PostComment({
     setLike: setReplyLike,
   } = useReplies({
     postId,
-    commentKey,
+    commentId,
   });
 
   const router = useRouter();
@@ -98,7 +98,7 @@ export default function PostComment({
               onClick={(e) => {
                 e.stopPropagation();
                 setMode('reply');
-                setReplyTarget({ username: authorUsername, commentKey });
+                setReplyTarget({ username: authorUsername, commentId });
               }}
             >
               Reply

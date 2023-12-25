@@ -28,8 +28,8 @@ export default function CommentsModal({
   const [mode, setMode] = useState<'comment' | 'reply'>('comment');
   const [replyTarget, setReplyTarget] = useState<{
     username: string;
-    commentKey: string;
-  }>({ username: '', commentKey: '' });
+    commentId: string;
+  }>({ username: '', commentId: '' });
   const commentsListRef = useRef<HTMLUListElement>(null);
 
   const scrollToBottom = () => {
