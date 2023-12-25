@@ -1,6 +1,7 @@
 import { HeartIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as SolidHeartIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
+import { Dispatch, SetStateAction } from 'react';
 
 import usePost from '@/hooks/usePost';
 import useReplies from '@/hooks/useReplies';
@@ -17,9 +18,19 @@ type Props = {
   comment: Comment;
   postId: string;
   setLike: (comment: Comment, username: string, like: boolean) => Promise<void>;
+  setMode: Dispatch<SetStateAction<'comment' | 'reply'>>;
+  setReplyTarget: Dispatch<
+    SetStateAction<{ username: string; commentKey: string }>
+  >;
 };
 
-export default function PostComment({ comment, postId, setLike }: Props) {
+export default function PostComment({
+  comment,
+  postId,
+  setLike,
+  setMode,
+  setReplyTarget,
+}: Props) {
   const {
     authorImage,
     authorUsername,
@@ -82,6 +93,16 @@ export default function PostComment({ comment, postId, setLike }: Props) {
                 <span className='text-gray-400'>{likes.length}</span>
               </div>
             </div>
+            <button
+              className='text-sm text-gray-500'
+              onClick={(e) => {
+                e.stopPropagation();
+                setMode('reply');
+                setReplyTarget({ username: authorUsername, commentKey });
+              }}
+            >
+              Reply
+            </button>
             {replies.length > 0 && (
               <ul className='mt-4 w-full space-y-4'>
                 {replies.map((reply) => (

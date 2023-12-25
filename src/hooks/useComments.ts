@@ -2,24 +2,25 @@ import { useEffect, useRef, useState } from 'react';
 import { Arguments, mutate as globalMutate } from 'swr';
 import useSWRInfinite from 'swr/infinite';
 
-import { getComments } from '@/lib/posts/comments';
+import { getComments, postComment } from '@/lib/posts/comments';
 import { updateCommentLike } from '@/lib/posts/like';
+import { User } from '@/model/user';
 import { POLICY } from '@/policy';
 import { VIDEO_SWR_KEY } from '@/swr';
 
-import type { Comment } from '@/model/post';
+import type { Comment, SimplePost } from '@/model/post';
 
-export default function useComments(postId: string) {
-  const COMMENT_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENTS}-${postId}`;
+export default function useComments(post: SimplePost) {
+  const COMMENT_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENTS}-${post.id}`;
 
   const [comments, setComments] = useState<Comment[]>([]);
   const lastCommentDateRef = useRef('0');
 
-  const { data, size, setSize, isLoading } = useSWRInfinite(
+  const { data, size, setSize, isLoading, mutate } = useSWRInfinite(
     (index) => `${COMMENT_SWR_BASE_KEY}-${index}`,
     async () => {
       const data = await getComments({
-        postId,
+        postId: post.id,
         lastCommentDate: lastCommentDateRef.current,
       });
       return data;
@@ -62,13 +63,41 @@ export default function useComments(postId: string) {
     await globalMutate(
       (key: Arguments) =>
         typeof key === 'string' && key.startsWith(COMMENT_SWR_BASE_KEY),
-      updateCommentLike(postId, comment.key, like),
+      updateCommentLike(post.id, comment.id, like),
       {
         populateCache: false,
         revalidate: false,
         rollbackOnError: true,
       },
     );
+  };
+
+  // TODO: Refactor
+  const addComment = async (user: User, comment: string) => {
+    const newPost = { ...post, comments: post.comments + 1 };
+
+    globalMutate(`/api/posts/${post.id}`, true, {
+      optimisticData: newPost,
+      revalidate: false,
+      populateCache: false,
+      rollbackOnError: false,
+    });
+
+    return await mutate(postComment({ postId: post.id, comment }), {
+      populateCache: false,
+      revalidate: false,
+      rollbackOnError: true,
+    }).then((res: any) => {
+      if (!res || !user) return;
+      const comments = res.data.comments as Comment[];
+      const uploadedComment = comments[comments.length - 1];
+      const modifiedComment: Comment = {
+        ...uploadedComment,
+        authorImage: user.imageUrl,
+        authorUsername: user.username,
+      };
+      setComments((prev) => [...prev, modifiedComment]);
+    });
   };
 
   useEffect(() => {
@@ -83,5 +112,6 @@ export default function useComments(postId: string) {
     setLike,
     isReachingEnd,
     loadMore,
+    addComment,
   };
 }
