@@ -30,6 +30,33 @@ export async function getReplies(
   return replies;
 }
 
+type PostReplyProps = {
+  postId: string;
+  commentKey: string;
+  uid: string;
+  reply: string;
+};
+export async function postReply({
+  postId,
+  commentKey,
+  uid,
+  reply,
+}: PostReplyProps) {
+  const result = await client
+    .patch(postId)
+    .setIfMissing({ [`comments[_key=="${commentKey}"].replies`]: [] })
+    .append(`comments[_key=="${commentKey}"].replies`, [
+      {
+        createdAt: new Date(),
+        author: { _type: 'reference', _ref: uid },
+        text: reply,
+        likes: [],
+      },
+    ])
+    .commit({ autoGenerateArrayKeys: true });
+  return result;
+}
+
 function mapReplies(replies: Reply[]) {
   return replies.map((reply) => ({
     ...reply,
