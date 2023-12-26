@@ -24,7 +24,7 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string; key: string } },
+  { params }: { params: { id: string; commentId: string } },
 ) {
   const session = await getServerSession(authOptions);
   const uid = session?.user.id;
@@ -34,15 +34,15 @@ export async function POST(
   }
 
   const { reply } = await req.json();
-  const { id: postId, key: commentId } = params;
+  const { id: postId, commentId } = params;
   if (!reply || !postId || !commentId) {
     return new Response('Bad Reqeust', { status: 400 });
   }
 
   return await postReply({ postId, commentId, uid, reply })
-    .then(() =>
+    .then((data) =>
       NextResponse.json(
-        { message: 'Successfully posted the reply' },
+        { message: 'Successfully posted the reply', data },
         { status: 201 },
       ),
     )

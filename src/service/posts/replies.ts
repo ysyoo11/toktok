@@ -1,4 +1,5 @@
 import { groq } from 'next-sanity';
+import uuid from 'uuid4';
 
 import { POLICY } from '@/policy';
 
@@ -42,11 +43,13 @@ export async function postReply({
   uid,
   reply,
 }: PostReplyProps) {
+  const id = uuid();
   const result = await client
     .patch(postId)
     .setIfMissing({ [`comments[id=="${commentId}"].replies`]: [] })
     .append(`comments[id=="${commentId}"].replies`, [
       {
+        id,
         createdAt: new Date(),
         author: { _type: 'reference', _ref: uid },
         text: reply,
