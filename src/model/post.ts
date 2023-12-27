@@ -43,4 +43,4 @@ export type Comment = {
   totalReplies: number;
 };
 
-export type Reply = Omit<Comment, 'replies'>;
+export type Reply = Omit<Comment, 'replies' | 'totalReplies'>;

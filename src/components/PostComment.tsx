@@ -3,7 +3,6 @@ import { HeartIcon as SolidHeartIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';
 
-import usePost from '@/hooks/usePost';
 import useReplies from '@/hooks/useReplies';
 import { useUser } from '@/hooks/useUser';
 
@@ -12,11 +11,11 @@ import PostCommentReply from './PostCommentReply';
 import Loading from './ui/Loading';
 import ToggleButton from './ui/ToggleButton';
 
-import type { Comment } from '@/model/post';
+import type { Comment, SimplePost } from '@/model/post';
 
 type Props = {
   comment: Comment;
-  postId: string;
+  post: SimplePost;
   setLike: (comment: Comment, username: string, like: boolean) => Promise<void>;
   setMode: Dispatch<SetStateAction<'comment' | 'reply'>>;
   setReplyTarget: Dispatch<
@@ -26,7 +25,7 @@ type Props = {
 
 export default function PostComment({
   comment,
-  postId,
+  post,
   setLike,
   setMode,
   setReplyTarget,
@@ -47,13 +46,12 @@ export default function PostComment({
     isLoading,
     setLike: setReplyLike,
   } = useReplies({
-    postId,
+    post,
     commentId,
   });
 
   const router = useRouter();
   const { user } = useUser();
-  const { post } = usePost(postId);
 
   if (!post) return <p>loading...</p>;
   const liked = user ? likes.includes(user.username) : false;
@@ -115,15 +113,17 @@ export default function PostComment({
                 ))}
               </ul>
             )}
-            {totalReplies > 0 && !isLoading && !isReachingEnd && (
-              <button
-                onClick={loadMore}
-                disabled={isLoading}
-                className='my-2 w-full py-1 text-start text-gray-500'
-              >
-                {!isLoading && `⸺ View ${totalReplies - replies.length} more`}
-              </button>
-            )}
+            {totalReplies - replies.length > 0 &&
+              !isLoading &&
+              !isReachingEnd && (
+                <button
+                  onClick={loadMore}
+                  disabled={isLoading}
+                  className='my-2 w-full py-1 text-start text-gray-500'
+                >
+                  {!isLoading && `⸺ View ${totalReplies - replies.length} more`}
+                </button>
+              )}
             {isLoading && <Loading className='my-1 w-10' />}
           </div>
         </div>
