@@ -1,4 +1,5 @@
 import { groq } from 'next-sanity';
+import uuid from 'uuid4';
 
 import { Comment } from '@/model/post';
 import { POLICY } from '@/policy';
@@ -12,7 +13,10 @@ export async function getComments(
   const comments = await client
     .fetch<{ comments: Comment[] }>(
       groq`*[_type == 'video' && _id == '${postId}'][0]{
-    "comments": comments[createdAt > $lastCommentDate][0...${POLICY.COMMENT_FETCH_LIMIT}]{
+    "comments": comments[${
+      lastCommentDate === '0' ? true : 'createdAt < $lastCommentDate'
+    }] | order(createdAt desc) [0...${POLICY.COMMENT_FETCH_LIMIT}] {
+      id,
       "key": _key,
       "authorUsername": author->username,
       "authorImage": author->imageUrl,
@@ -24,7 +28,7 @@ export async function getComments(
   }`,
       { lastCommentDate },
     )
-    .then(({ comments }) => mapComments(comments));
+    .then(({ comments }) => (comments ? mapComments(comments) : []));
   return comments;
 }
 
@@ -33,11 +37,13 @@ export async function postComment(
   uid: string,
   comment: string,
 ) {
+  const id = uuid();
   return await client
     .patch(postId)
     .setIfMissing({ comments: [] })
     .append('comments', [
       {
+        id,
         createdAt: new Date(),
         author: { _type: 'reference', _ref: uid },
         text: comment,

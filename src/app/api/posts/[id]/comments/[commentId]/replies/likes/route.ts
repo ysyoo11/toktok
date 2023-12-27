@@ -7,7 +7,7 @@ import { dislikeReply, likeReply } from '@/service/posts/like';
 // TODO: Refactor by making a middleware for validating session user
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string; key: string } },
+  { params }: { params: { id: string; commentId: string } },
 ) {
   const session = await getServerSession(authOptions);
   const uid = session?.user.id;
@@ -19,16 +19,16 @@ export async function PUT(
     );
   }
 
-  const { id: postId, key: commentKey } = params;
+  const { id: postId, commentId } = params;
   const { replyKey, like } = await req.json();
 
-  if (!postId || !commentKey || replyKey === undefined || like === undefined) {
+  if (!postId || !commentId || replyKey === undefined || like === undefined) {
     return NextResponse.json({ message: 'Bad Request' }, { status: 400 });
   }
 
   const request = like ? likeReply : dislikeReply;
 
-  return request({ postId, commentKey, replyKey, uid })
+  return request({ postId, commentId, replyKey, uid })
     .then(() =>
       NextResponse.json(
         {

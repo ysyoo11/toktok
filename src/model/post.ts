@@ -32,6 +32,7 @@ export type Post = {
 };
 
 export type Comment = {
+  id: string;
   key: string;
   authorUsername: string;
   authorImage: string;
@@ -42,4 +43,4 @@ export type Comment = {
   totalReplies: number;
 };
 
-export type Reply = Omit<Comment, 'replies'>;
+export type Reply = Omit<Comment, 'replies' | 'totalReplies'>;

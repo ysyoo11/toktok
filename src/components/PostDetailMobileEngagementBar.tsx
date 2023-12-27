@@ -38,6 +38,7 @@ export default function PostDetailMobileEngagementBar({ post }: Props) {
 
   const openComments = (e: MouseEvent) => {
     e.stopPropagation();
+    if (!user) return router.push('/signin', { scroll: false });
     setShowComments(true);
   };
 
@@ -84,7 +85,7 @@ export default function PostDetailMobileEngagementBar({ post }: Props) {
       <CommentsModal
         isOpen={showComments}
         onClose={() => setShowComments(false)}
-        postId={id}
+        post={post}
         totalComments={comments}
       />
     </>

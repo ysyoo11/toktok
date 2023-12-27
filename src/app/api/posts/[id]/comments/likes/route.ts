@@ -17,21 +17,21 @@ export async function PUT(
 
   const postId = params.id;
 
-  const { like, commentKey } = await req.json();
+  const { like, commentId } = await req.json();
 
-  if (!postId || like === undefined || commentKey === undefined) {
+  if (!postId || like === undefined || commentId === undefined) {
     return new Response('Bad Request', { status: 400 });
   }
 
   const request = like ? likeComment : dislikeComment;
 
-  return request(postId, commentKey, user.id)
+  return request(postId, commentId, user.id)
     .then(() =>
       NextResponse.json(
         {
           message: `${
             like ? 'Liked' : 'Disliked'
-          } the comment (key: ${commentKey})`,
+          } the comment (id: ${commentId})`,
         },
         { status: 200 },
       ),

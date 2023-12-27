@@ -1,9 +1,10 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 
 import useComments from '@/hooks/useComments';
+import { SimplePost } from '@/model/post';
 
 import CommentForm from '../CommentForm';
 import PostComment from '../PostComment';
@@ -12,18 +13,25 @@ import Loading from '../ui/Loading';
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  postId: string;
+  post: SimplePost;
   totalComments: number;
 };
+
+export const COMMENTS_LIST_ID = 'comments-list' as const;
 
 export default function CommentsModal({
   isOpen,
   onClose,
-  postId,
+  post,
   totalComments,
 }: Props) {
-  const { comments, loading, loadMore, isReachingEnd, setLike } =
-    useComments(postId);
+  const { comments, loading, loadMore, isReachingEnd, setLike, addComment } =
+    useComments(post);
+  const [mode, setMode] = useState<'comment' | 'reply'>('comment');
+  const [replyTarget, setReplyTarget] = useState<{
+    username: string;
+    commentId: string;
+  }>({ username: '', commentId: '' });
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -61,21 +69,37 @@ export default function CommentsModal({
                     <XMarkIcon className='h-5 w-5 stroke-2' />
                   </button>
                 </div>
-                {loading && <p className='text-center'>Loading comments...</p>}
-                {comments && (
-                  <ul className='h-max max-h-96 w-full space-y-4 overflow-y-auto px-4'>
+                {comments.length === 0 && (
+                  <div className='flex items-center justify-center py-20'>
+                    {loading ? (
+                      <Loading className='w-12' />
+                    ) : (
+                      <p className='text-center text-sm text-gray-500'>
+                        There are no comments yet.
+                      </p>
+                    )}
+                  </div>
+                )}
+                {comments.length > 0 && (
+                  <ul
+                    className='h-max max-h-96 w-full space-y-4 overflow-y-auto px-4'
+                    onClick={() => setMode('comment')}
+                    id={COMMENTS_LIST_ID}
+                  >
                     {comments.map((comment) => (
-                      <li key={comment.key}>
+                      <li key={comment.id}>
                         <PostComment
                           comment={comment}
-                          postId={postId}
+                          post={post}
                           setLike={setLike}
+                          setMode={setMode}
+                          setReplyTarget={setReplyTarget}
                         />
                       </li>
                     ))}
                     {loading && <Loading className='w-12' />}
                     {!isReachingEnd && (
-                      <div className='bg-red-300 py-2'>
+                      <div className='py-2'>
                         <InView
                           as='div'
                           rootMargin='24px'
@@ -87,7 +111,12 @@ export default function CommentsModal({
                     )}
                   </ul>
                 )}
-                <CommentForm postId={postId} />
+                <CommentForm
+                  post={post}
+                  mode={mode}
+                  replyTarget={replyTarget}
+                  addComment={addComment}
+                />
               </Dialog.Panel>
             </Transition.Child>
           </div>
