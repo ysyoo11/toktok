@@ -1,6 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 
 import useComments from '@/hooks/useComments';
@@ -17,6 +17,8 @@ type Props = {
   totalComments: number;
 };
 
+export const COMMENTS_LIST_ID = 'comments-list' as const;
+
 export default function CommentsModal({
   isOpen,
   onClose,
@@ -30,14 +32,6 @@ export default function CommentsModal({
     username: string;
     commentId: string;
   }>({ username: '', commentId: '' });
-  const commentsListRef = useRef<HTMLUListElement>(null);
-
-  const scrollToBottom = () => {
-    commentsListRef.current?.scrollTo({
-      behavior: 'smooth',
-      top: commentsListRef.current.scrollHeight,
-    });
-  };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -75,18 +69,28 @@ export default function CommentsModal({
                     <XMarkIcon className='h-5 w-5 stroke-2' />
                   </button>
                 </div>
-                {loading && <p className='text-center'>Loading comments...</p>}
-                {comments && (
+                {comments.length === 0 && (
+                  <div className='flex items-center justify-center py-20'>
+                    {loading ? (
+                      <Loading className='w-12' />
+                    ) : (
+                      <p className='text-center text-sm text-gray-500'>
+                        There are no comments yet.
+                      </p>
+                    )}
+                  </div>
+                )}
+                {comments.length > 0 && (
                   <ul
                     className='h-max max-h-96 w-full space-y-4 overflow-y-auto px-4'
                     onClick={() => setMode('comment')}
-                    ref={commentsListRef}
+                    id={COMMENTS_LIST_ID}
                   >
                     {comments.map((comment) => (
                       <li key={comment.id}>
                         <PostComment
                           comment={comment}
-                          postId={post.id}
+                          post={post}
                           setLike={setLike}
                           setMode={setMode}
                           setReplyTarget={setReplyTarget}
@@ -108,11 +112,10 @@ export default function CommentsModal({
                   </ul>
                 )}
                 <CommentForm
-                  postId={post.id}
+                  post={post}
                   mode={mode}
                   replyTarget={replyTarget}
                   addComment={addComment}
-                  scrollToBottom={scrollToBottom}
                 />
               </Dialog.Panel>
             </Transition.Child>

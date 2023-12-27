@@ -1,25 +1,25 @@
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 
+import useReplies from '@/hooks/useReplies';
 import { useUser } from '@/hooks/useUser';
-import { User } from '@/model/user';
+import { SimplePost } from '@/model/post';
 
 import Avatar from './Avatar';
+import { COMMENTS_LIST_ID } from './modal/CommentsModal';
 
 type Props = {
-  postId: string;
+  post: SimplePost;
   mode: 'reply' | 'comment';
   replyTarget: { username: string; commentId: string };
-  addComment: (user: User, comment: string) => Promise<void>;
-  scrollToBottom: () => void;
+  addComment: (comment: string) => Promise<void>;
 };
 
 export default function CommentForm({
-  postId,
+  post,
   mode,
   replyTarget: { username, commentId },
   addComment,
-  scrollToBottom,
 }: Props) {
   const { user } = useUser();
   const [comment, setComment] = useState('');
@@ -28,20 +28,31 @@ export default function CommentForm({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const { addReply } = useReplies({ post, commentId });
+
+  const scrollToTop = () => {
+    setTimeout(() => {
+      const commentsListElem = document.getElementById(COMMENTS_LIST_ID);
+      if (!commentsListElem) return;
+      commentsListElem.scrollTo({
+        behavior: 'smooth',
+        top: 0,
+      });
+    }, 500);
+  };
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!user) return router.push('/signin', { scroll: false });
     setLoading(true);
     if (mode === 'reply') {
-      return; // TODO:
+      await addReply(commentId, comment);
     } else {
-      addComment(user, comment)
-        .then(() => {
-          setComment('');
-          scrollToBottom();
-        })
-        .finally(() => setLoading(false));
+      await addComment(comment) //
+        .then(() => scrollToTop());
     }
+    setComment('');
+    setLoading(false);
   };
 
   useEffect(() => {
