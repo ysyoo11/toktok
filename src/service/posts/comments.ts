@@ -13,7 +13,9 @@ export async function getComments(
   const comments = await client
     .fetch<{ comments: Comment[] }>(
       groq`*[_type == 'video' && _id == '${postId}'][0]{
-    "comments": comments[createdAt > $lastCommentDate][0...${POLICY.COMMENT_FETCH_LIMIT}]{
+    "comments": comments[${
+      lastCommentDate === '0' ? true : 'createdAt < $lastCommentDate'
+    }] | order(createdAt desc) [0...${POLICY.COMMENT_FETCH_LIMIT}] {
       id,
       "key": _key,
       "authorUsername": author->username,
@@ -26,7 +28,7 @@ export async function getComments(
   }`,
       { lastCommentDate },
     )
-    .then(({ comments }) => mapComments(comments));
+    .then(({ comments }) => (comments ? mapComments(comments) : []));
   return comments;
 }
 
