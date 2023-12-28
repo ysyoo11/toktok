@@ -45,12 +45,9 @@ export default function CommentForm({
     e.preventDefault();
     if (!user) return router.push('/signin', { scroll: false });
     setLoading(true);
-    if (mode === 'reply') {
-      await addReply(commentId, comment);
-    } else {
-      await addComment(comment) //
-        .then(() => scrollToTop());
-    }
+    mode === 'reply'
+      ? await addReply(commentId, comment)
+      : await addComment(comment).then(() => scrollToTop());
     setComment('');
     setLoading(false);
   };
