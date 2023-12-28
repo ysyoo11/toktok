@@ -2,6 +2,7 @@ import { HeartIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as SolidHeartIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';
+import { format } from 'timeago.js';
 
 import useReplies from '@/hooks/useReplies';
 import { useUser } from '@/hooks/useUser';
@@ -30,7 +31,14 @@ export default function PostComment({
   setMode,
   setReplyTarget,
 }: Props) {
-  const { authorImage, authorUsername, text, likes, id: commentId } = comment;
+  const {
+    authorImage,
+    authorUsername,
+    text,
+    likes,
+    id: commentId,
+    createdAt,
+  } = comment;
 
   const {
     replies,
@@ -86,16 +94,19 @@ export default function PostComment({
                 <span className='text-gray-400'>{likes.length}</span>
               </div>
             </div>
-            <button
-              className='text-sm text-gray-500'
-              onClick={(e) => {
-                e.stopPropagation();
-                setMode('reply');
-                setReplyTarget({ username: authorUsername, commentId });
-              }}
-            >
-              Reply
-            </button>
+            <div className='flex items-center space-x-2'>
+              <span className='text-xs text-gray-400'>{format(createdAt)}</span>
+              <button
+                className='text-sm text-gray-500'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMode('reply');
+                  setReplyTarget({ username: authorUsername, commentId });
+                }}
+              >
+                Reply
+              </button>
+            </div>
             {replies.length > 0 && (
               <ul className='mt-4 w-full space-y-4'>
                 {replies.map((reply) => (
