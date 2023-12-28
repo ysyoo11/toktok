@@ -3,12 +3,13 @@ import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Fragment, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 
-import useComments from '@/hooks/useComments';
-import { SimplePost } from '@/model/post';
+import { usePostStore } from '@/context/PostContext';
 
 import CommentForm from '../CommentForm';
 import PostComment from '../PostComment';
 import Loading from '../ui/Loading';
+
+import type { SimplePost } from '@/model/post';
 
 type Props = {
   isOpen: boolean;
@@ -33,7 +34,7 @@ export default function CommentsModal({
     setLike,
     addComment,
     addReply,
-  } = useComments(post);
+  } = usePostStore();
   const [mode, setMode] = useState<'comment' | 'reply'>('comment');
   const [replyTarget, setReplyTarget] = useState<{
     username: string;
@@ -66,7 +67,7 @@ export default function CommentsModal({
               leaveFrom='opacity-100 translate-y-0'
               leaveTo='opacity-0 translate-y-12'
             >
-              <Dialog.Panel className='w-full transform overflow-hidden rounded-t-lg bg-white pb-4 text-left align-middle shadow-xl transition-all'>
+              <Dialog.Panel className='w-full transform overflow-hidden rounded-t-lg bg-white text-left align-middle shadow-xl transition-all'>
                 <div className='px-4 pb-4 pt-6'>
                   <p className='text-center font-medium leading-6 text-gray-700'>
                     {totalComments}{' '}

@@ -36,17 +36,17 @@ export default async function RootLayout({
       <body className={inter.className}>
         <AuthContext session={session}>
           <Header />
-          <div className='flex w-full'>
-            <SideNav />
-            <div className='mx-auto mt-16 w-full max-w-3xl px-3 lg:pl-0'>
-              <SWRConfigContext>
-                <>
+          <SWRConfigContext>
+            <>
+              <div className='flex w-full' id='base-route'>
+                <SideNav />
+                <div className='mx-auto mt-16 w-full max-w-3xl px-3 lg:pl-0'>
                   {children}
-                  {modal}
-                </>
-              </SWRConfigContext>
-            </div>
-          </div>
+                </div>
+              </div>
+              <div>{modal}</div>
+            </>
+          </SWRConfigContext>
         </AuthContext>
       </body>
     </html>
