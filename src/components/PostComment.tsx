@@ -67,7 +67,7 @@ export default function PostComment({
 
   return (
     <>
-      <div className='flex w-full items-center justify-between'>
+      <div className='flex w-full items-center justify-between xs:py-2'>
         <div className='flex w-full'>
           <Avatar size='sm' image={authorImage} name={authorUsername} />
           <div className='ml-2 w-full'>
