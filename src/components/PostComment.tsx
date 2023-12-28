@@ -30,21 +30,16 @@ export default function PostComment({
   setMode,
   setReplyTarget,
 }: Props) {
-  const {
-    authorImage,
-    authorUsername,
-    text,
-    likes,
-    totalReplies,
-    id: commentId,
-  } = comment;
+  const { authorImage, authorUsername, text, likes, id: commentId } = comment;
 
   const {
     replies,
     loadMore,
     isReachingEnd,
-    isLoading,
+    repliesLoading,
     setLike: setReplyLike,
+    totalReplies,
+    commentLoading,
   } = useReplies({
     post,
     commentId,
@@ -114,17 +109,20 @@ export default function PostComment({
               </ul>
             )}
             {totalReplies - replies.length > 0 &&
-              !isLoading &&
+              !repliesLoading &&
               !isReachingEnd && (
                 <button
                   onClick={loadMore}
-                  disabled={isLoading}
+                  disabled={repliesLoading}
                   className='my-2 w-full py-1 text-start text-gray-500'
                 >
-                  {!isLoading && `⸺ View ${totalReplies - replies.length} more`}
+                  {!repliesLoading &&
+                    `⸺ View ${totalReplies - replies.length} more`}
                 </button>
               )}
-            {isLoading && <Loading className='my-1 w-10' />}
+            {(repliesLoading || commentLoading) && (
+              <Loading className='my-1 w-10' />
+            )}
           </div>
         </div>
       </div>
