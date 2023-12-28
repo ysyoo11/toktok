@@ -6,6 +6,7 @@ type Props = {
   onIcon: React.ReactNode;
   offIcon: React.ReactNode;
   wrapped?: boolean;
+  horizontal?: boolean;
 };
 
 export default function ToggleButton({
@@ -14,6 +15,7 @@ export default function ToggleButton({
   onIcon,
   offIcon,
   wrapped = false,
+  horizontal = false,
 }: Props) {
   return (
     <button
@@ -21,7 +23,10 @@ export default function ToggleButton({
         e.stopPropagation();
         onToggle(!toggled);
       }}
-      className={clsx(wrapped ? 'rounded-full bg-gray-100 p-1.5 sm:p-2.5' : '')}
+      className={clsx(wrapped ? 'rounded-full bg-gray-100' : '', {
+        'p-2': horizontal,
+        'p-1.5 sm:p-2.5': !horizontal,
+      })}
     >
       {toggled ? onIcon : offIcon}
     </button>
