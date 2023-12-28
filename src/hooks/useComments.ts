@@ -4,14 +4,16 @@ import useSWRImmutable from 'swr/immutable';
 
 import { getComments, postComment } from '@/lib/posts/comments';
 import { updateCommentLike } from '@/lib/posts/like';
+import { postReply } from '@/lib/posts/replies';
 import { POLICY } from '@/policy';
 import { VIDEO_SWR_KEY } from '@/swr';
 
 import type { Comment, SimplePost } from '@/model/post';
 
 export default function useComments(post: SimplePost) {
-  const COMMENT_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENTS}-${post.id}`;
-  const { mutate: globalMutate } = useSWRConfig();
+  const { id: postId } = post;
+  const COMMENT_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENTS}-${postId}`;
+  const { mutate } = useSWRConfig();
   const [comments, setComments] = useState<Comment[]>([]);
   const [page, setPage] = useState(1);
   const lastCommentDateRef = useRef('0');
@@ -22,7 +24,7 @@ export default function useComments(post: SimplePost) {
     `${COMMENT_SWR_BASE_KEY}-${page}`,
     async () =>
       await getComments({
-        postId: post.id,
+        postId,
         lastCommentDate: lastCommentDateRef.current,
       }),
   );
@@ -48,10 +50,10 @@ export default function useComments(post: SimplePost) {
     );
     setComments(newComments);
 
-    await globalMutate(
+    await mutate(
       (key: Arguments) =>
         typeof key === 'string' && key.startsWith(COMMENT_SWR_BASE_KEY),
-      updateCommentLike(post.id, comment.id, like),
+      updateCommentLike(postId, comment.id, like),
       {
         populateCache: false,
         revalidate: false,
@@ -60,19 +62,36 @@ export default function useComments(post: SimplePost) {
     );
   };
 
-  const addComment = async (comment: string) => {
+  const mutatePostCommentsNum = () => {
     const newPost = { ...post, comments: post.comments + 1 };
-    globalMutate(`/api/posts/${post.id}`, true, {
+    mutate(`/api/posts/${postId}`, true, {
       optimisticData: newPost,
       revalidate: false,
       populateCache: false,
       rollbackOnError: false,
     });
+  };
+
+  const addComment = async (comment: string) => {
+    mutatePostCommentsNum();
     addCommentFlagRef.current = true;
-    await postComment({ postId: post.id, comment }) //
+    await postComment({ postId, comment }) //
       .then(() => {
         lastCommentDateRef.current = '0';
-        globalMutate(
+        mutate(
+          (key) =>
+            typeof key === 'string' && key.startsWith(COMMENT_SWR_BASE_KEY),
+        );
+      });
+  };
+
+  const addReply = async (commentId: string, reply: string) => {
+    mutatePostCommentsNum();
+    addCommentFlagRef.current = true;
+    await postReply({ postId, commentId, reply }) //
+      .then(() => {
+        lastCommentDateRef.current = '0';
+        mutate(
           (key) =>
             typeof key === 'string' && key.startsWith(COMMENT_SWR_BASE_KEY),
         );
@@ -112,5 +131,6 @@ export default function useComments(post: SimplePost) {
     loadMore,
     addComment,
     page,
+    addReply,
   };
 }

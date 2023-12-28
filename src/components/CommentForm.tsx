@@ -1,25 +1,24 @@
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 
-import useReplies from '@/hooks/useReplies';
 import { useUser } from '@/hooks/useUser';
-import { SimplePost } from '@/model/post';
 
 import Avatar from './Avatar';
 import { COMMENTS_LIST_ID } from './modal/CommentsModal';
+import { REPLIES_LIST_ID } from './PostComment';
 
 type Props = {
-  post: SimplePost;
   mode: 'reply' | 'comment';
   replyTarget: { username: string; commentId: string };
   addComment: (comment: string) => Promise<void>;
+  addReply: (commentId: string, reply: string) => Promise<void>;
 };
 
 export default function CommentForm({
-  post,
   mode,
   replyTarget: { username, commentId },
   addComment,
+  addReply,
 }: Props) {
   const { user } = useUser();
   const [comment, setComment] = useState('');
@@ -27,8 +26,6 @@ export default function CommentForm({
   const router = useRouter();
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const { addReply } = useReplies({ post, commentId });
 
   const scrollToTop = () => {
     setTimeout(() => {
@@ -41,12 +38,22 @@ export default function CommentForm({
     }, 500);
   };
 
+  const scrollToReply = () => {
+    setTimeout(() => {
+      const repliesListElem = document.getElementById(
+        `${REPLIES_LIST_ID}-${commentId}`,
+      );
+      if (!repliesListElem) return;
+      repliesListElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 500);
+  };
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!user) return router.push('/signin', { scroll: false });
     setLoading(true);
     mode === 'reply'
-      ? await addReply(commentId, comment)
+      ? await addReply(commentId, comment).then(() => scrollToReply())
       : await addComment(comment).then(() => scrollToTop());
     setComment('');
     setLoading(false);

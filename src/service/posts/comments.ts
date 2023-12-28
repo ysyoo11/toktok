@@ -23,24 +23,13 @@ export async function getComments(
       text,
       "likes": likes[]->username,
       createdAt,
-      "totalReplies": count(replies)
+      "totalReplies": count(replies),
     }
   }`,
       { lastCommentDate },
     )
     .then(({ comments }) => (comments ? mapComments(comments) : []));
   return comments;
-}
-
-export async function getCommentById(postId: string, commentId: string) {
-  const { comment } = await client.fetch<{ comment: Comment }>(
-    groq`*[_type == 'video' && _id == '${postId}'][0] {
-      "comment": comments[id == '${commentId}'][0] {
-        "totalReplies": count(replies)
-      }
-    }`,
-  );
-  return comment;
 }
 
 export async function postComment(
@@ -69,11 +58,5 @@ function mapComments(comments: Comment[]) {
   return comments.map((comment) => ({
     ...comment,
     likes: comment.likes ?? [],
-    replies: comment.replies
-      ? comment.replies.map((reply) => ({
-          ...reply,
-          likes: reply.likes ?? [],
-        }))
-      : [],
   }));
 }
