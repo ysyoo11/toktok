@@ -1,6 +1,7 @@
 import { HeartIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as SolidHeartIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
+import { format } from 'timeago.js';
 
 import { useUser } from '@/hooks/useUser';
 
@@ -20,7 +21,7 @@ export default function PostCommentReply({
   postAuthorUsername,
   setLike,
 }: Props) {
-  const { authorImage, authorUsername, text, likes, key } = reply;
+  const { authorImage, authorUsername, text, likes, createdAt } = reply;
   const router = useRouter();
   const { user } = useUser();
   const liked = user ? likes.includes(user.username) : false;
@@ -45,6 +46,9 @@ export default function PostCommentReply({
               </span>
             )}
             <p>{text}</p>
+            <span className='block -translate-y-1/4 text-xs text-gray-400'>
+              {format(createdAt)}
+            </span>
           </div>
         </div>
 
