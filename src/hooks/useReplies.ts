@@ -2,12 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { Arguments, mutate as globalMutate } from 'swr';
 import useSWRImmutable from 'swr/immutable';
 
+import { getCommentById } from '@/lib/posts/comments';
 import { updateReplyLike } from '@/lib/posts/like';
 import { getReplies, postReply } from '@/lib/posts/replies';
 import { POLICY } from '@/policy';
 import { VIDEO_SWR_KEY } from '@/swr';
-
-import { useUser } from './useUser';
 
 import type { Comment, Reply, SimplePost } from '@/model/post';
 
@@ -17,42 +16,38 @@ type Props = {
 };
 
 export default function useReplies({ post, commentId }: Props) {
-  const REPLY_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENT_REPLIES}-${post.id}-${commentId}`;
+  const { id: postId } = post;
+  const REPLY_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENT_REPLIES}-${postId}-${commentId}`;
+  const COMMENT_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENT_BY_ID}-${postId}-${commentId}`;
 
-  const { user } = useUser();
-  const [fetchable, setFetchable] = useState(false);
   const [page, setPage] = useState(0);
   const [replies, setReplies] = useState<Reply[]>([]);
   const lastReplyDateRef = useRef('0');
 
-  const { data, isLoading, isValidating, mutate } = useSWRImmutable(
-    fetchable ? `${REPLY_SWR_BASE_KEY}-${page}` : null,
-    () => {
-      return getReplies({
-        postId: post.id,
-        commentId,
-        lastReplyDate: lastReplyDateRef.current,
-      });
-    },
+  const {
+    data: commentData,
+    isLoading: commentLoading,
+    mutate: commentMutate,
+  } = useSWRImmutable<Comment>(
+    COMMENT_SWR_BASE_KEY,
+    async () => await getCommentById({ postId, commentId }),
   );
 
-  const loadMore = async () => {
-    if (!fetchable) {
-      setFetchable(true);
-      return;
-    }
-    setPage((prev) => prev + 1);
-  };
+  const {
+    data,
+    isLoading: repliesLoading,
+    isValidating,
+  } = useSWRImmutable(
+    page > 0 ? `${REPLY_SWR_BASE_KEY}-${page}` : null,
+    async () =>
+      await getReplies({
+        postId,
+        commentId,
+        lastReplyDate: lastReplyDateRef.current,
+      }),
+  );
 
-  useEffect(() => {
-    if (replies.length > 0) {
-      const lastReply = replies[replies.length - 1];
-      lastReplyDateRef.current = lastReply.createdAt;
-    } else {
-      lastReplyDateRef.current = '0';
-    }
-  }, [replies]);
-
+  const loadMore = () => setPage((prev) => prev + 1);
   const isReachingEnd = data && data.length < POLICY.REPLY_FETCH_LIMIT;
 
   const setLike = async (reply: Reply, username: string, like: boolean) => {
@@ -70,7 +65,7 @@ export default function useReplies({ post, commentId }: Props) {
       (key: Arguments) =>
         typeof key === 'string' && key.startsWith(REPLY_SWR_BASE_KEY),
       updateReplyLike({
-        postId: post.id,
+        postId,
         commentId,
         replyKey: reply.key,
         like,
@@ -84,45 +79,24 @@ export default function useReplies({ post, commentId }: Props) {
   };
 
   const addReply = async (commentId: string, reply: string) => {
-    await mutate(postReply({ postId: post.id, commentId, reply }), {
-      populateCache: false,
-      revalidate: true,
-      rollbackOnError: true,
-    }).then((res: any) => {
-      if (!res || !user) return;
-      const replies = (res.data.comments as Comment[]).find(
-        (c) => c.id === commentId,
-      )?.replies;
-      if (!replies) throw new Error('Could not find replies');
-      const uploadedReply = replies[replies.length - 1];
-      const modifiedReply: Reply = {
-        ...uploadedReply,
-        authorImage: user.imageUrl,
-        authorUsername: user.username,
-      };
-      setReplies((prev) => [...prev, modifiedReply]);
-    });
-
     const newPost = { ...post, comments: post.comments + 1 };
-    globalMutate(`/api/posts/${post.id}`, true, {
+    globalMutate(`/api/posts/${postId}`, true, {
       optimisticData: newPost,
       revalidate: false,
       populateCache: false,
       rollbackOnError: false,
     });
-
-    globalMutate(
-      (key: Arguments) =>
-        typeof key === 'string' &&
-        key.startsWith(`${VIDEO_SWR_KEY.GET_POST_COMMENTS}-${post.id}`),
-      true,
-      {
-        revalidate: true,
-        populateCache: false,
-        rollbackOnError: true,
-      },
-    ).then((res) => console.log(res));
+    commentMutate(postReply({ postId, commentId, reply }));
   };
+
+  useEffect(() => {
+    if (replies.length > 0) {
+      const lastReply = replies[replies.length - 1];
+      lastReplyDateRef.current = lastReply.createdAt;
+    } else {
+      lastReplyDateRef.current = '0';
+    }
+  }, [replies]);
 
   useEffect(() => {
     if (data && data.length > 0) {
@@ -133,9 +107,11 @@ export default function useReplies({ post, commentId }: Props) {
   return {
     replies,
     loadMore,
-    isLoading: isLoading || isValidating,
+    repliesLoading: repliesLoading || isValidating,
     isReachingEnd,
     setLike,
     addReply,
+    totalReplies: commentData ? commentData.totalReplies : 0,
+    commentLoading,
   };
 }
