@@ -66,7 +66,7 @@ export default function CommentForm({
   }, [mode]);
 
   return (
-    <div className='flex items-center border-t px-4 pt-4'>
+    <div className='sticky bottom-0 flex w-full items-center border-t bg-white px-4 py-3'>
       <Avatar
         image={user ? user.imageUrl : ''}
         name={user ? user.username : ''}

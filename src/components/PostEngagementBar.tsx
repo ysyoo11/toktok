@@ -17,9 +17,14 @@ import type { SimplePost } from '@/model/post';
 type Props = {
   post: SimplePost;
   horizontal?: boolean;
+  className?: string;
 };
 
-export default function PostEngagementBar({ post, horizontal = false }: Props) {
+export default function PostEngagementBar({
+  post,
+  horizontal = false,
+  className,
+}: Props) {
   const { likes, comments } = post;
 
   const listClassName = `flex ${
@@ -55,6 +60,7 @@ export default function PostEngagementBar({ post, horizontal = false }: Props) {
       className={clsx(
         'flex px-4',
         horizontal ? 'flex-row space-x-3' : 'flex-col',
+        className,
       )}
     >
       <li className={listClassName}>
