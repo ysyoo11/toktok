@@ -16,12 +16,13 @@ export async function getReplies(
     .fetch<{ replies: Reply[] }>(
       groq`*[_type == 'video' && _id == '${postId}'][0]{
     "replies": comments[id == '${commentId}'].replies[createdAt > $lastReplyDate][0...${POLICY.REPLY_FETCH_LIMIT}]{
-      ...,
+      id,
       "key": _key,
       "authorUsername": author->username,
       "authorImage": author->imageUrl,
       text,
       "likes": likes[]->username,
+      createdAt,
     }
   }`,
       { lastReplyDate },

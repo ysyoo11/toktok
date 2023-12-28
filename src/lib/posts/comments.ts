@@ -12,6 +12,18 @@ export async function getComments({
     `/api/posts/${postId}/comments?lastCommentDate=${lastCommentDate}`,
   ).then((res) => res.json());
 }
+type GetCommentByIdProps = {
+  postId: string;
+  commentId: string;
+};
+export async function getCommentById({
+  postId,
+  commentId,
+}: GetCommentByIdProps) {
+  return await fetch(`/api/posts/${postId}/comments/${commentId}`).then((res) =>
+    res.json(),
+  );
+}
 
 type PostCommentProps = {
   postId: string;
