@@ -46,7 +46,7 @@ export default function PostCommentReply({
               </span>
             )}
             <p>{text}</p>
-            <span className='block -translate-y-1/4 text-xs text-gray-400'>
+            <span className='block text-xs text-gray-400'>
               {format(createdAt)}
             </span>
           </div>

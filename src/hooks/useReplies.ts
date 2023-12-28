@@ -2,13 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { Arguments, mutate as globalMutate } from 'swr';
 import useSWRImmutable from 'swr/immutable';
 
-import { getCommentById } from '@/lib/posts/comments';
 import { updateReplyLike } from '@/lib/posts/like';
-import { getReplies, postReply } from '@/lib/posts/replies';
+import { getReplies } from '@/lib/posts/replies';
 import { POLICY } from '@/policy';
 import { VIDEO_SWR_KEY } from '@/swr';
 
-import type { Comment, Reply, SimplePost } from '@/model/post';
+import type { Reply, SimplePost } from '@/model/post';
 
 type Props = {
   post: SimplePost;
@@ -18,26 +17,12 @@ type Props = {
 export default function useReplies({ post, commentId }: Props) {
   const { id: postId } = post;
   const REPLY_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENT_REPLIES}-${postId}-${commentId}`;
-  const COMMENT_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENT_BY_ID}-${postId}-${commentId}`;
 
   const [page, setPage] = useState(0);
   const [replies, setReplies] = useState<Reply[]>([]);
   const lastReplyDateRef = useRef('0');
 
-  const {
-    data: commentData,
-    isLoading: commentLoading,
-    mutate: commentMutate,
-  } = useSWRImmutable<Comment>(
-    COMMENT_SWR_BASE_KEY,
-    async () => await getCommentById({ postId, commentId }),
-  );
-
-  const {
-    data,
-    isLoading: repliesLoading,
-    isValidating,
-  } = useSWRImmutable(
+  const { data, isLoading, isValidating } = useSWRImmutable(
     page > 0 ? `${REPLY_SWR_BASE_KEY}-${page}` : null,
     async () =>
       await getReplies({
@@ -78,17 +63,6 @@ export default function useReplies({ post, commentId }: Props) {
     );
   };
 
-  const addReply = async (commentId: string, reply: string) => {
-    const newPost = { ...post, comments: post.comments + 1 };
-    globalMutate(`/api/posts/${postId}`, true, {
-      optimisticData: newPost,
-      revalidate: false,
-      populateCache: false,
-      rollbackOnError: false,
-    });
-    commentMutate(postReply({ postId, commentId, reply }));
-  };
-
   useEffect(() => {
     if (replies.length > 0) {
       const lastReply = replies[replies.length - 1];
@@ -107,11 +81,8 @@ export default function useReplies({ post, commentId }: Props) {
   return {
     replies,
     loadMore,
-    repliesLoading: repliesLoading || isValidating,
+    loading: isLoading || isValidating,
     isReachingEnd,
     setLike,
-    addReply,
-    totalReplies: commentData ? commentData.totalReplies : 0,
-    commentLoading,
   };
 }

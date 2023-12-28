@@ -25,8 +25,15 @@ export default function CommentsModal({
   post,
   totalComments,
 }: Props) {
-  const { comments, loading, loadMore, isReachingEnd, setLike, addComment } =
-    useComments(post);
+  const {
+    comments,
+    loading,
+    loadMore,
+    isReachingEnd,
+    setLike,
+    addComment,
+    addReply,
+  } = useComments(post);
   const [mode, setMode] = useState<'comment' | 'reply'>('comment');
   const [replyTarget, setReplyTarget] = useState<{
     username: string;
@@ -112,10 +119,10 @@ export default function CommentsModal({
                   </ul>
                 )}
                 <CommentForm
-                  post={post}
                   mode={mode}
                   replyTarget={replyTarget}
                   addComment={addComment}
+                  addReply={addReply}
                 />
               </Dialog.Panel>
             </Transition.Child>

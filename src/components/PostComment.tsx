@@ -24,6 +24,8 @@ type Props = {
   >;
 };
 
+export const REPLIES_LIST_ID = 'replies-list';
+
 export default function PostComment({
   comment,
   post,
@@ -38,16 +40,15 @@ export default function PostComment({
     likes,
     id: commentId,
     createdAt,
+    totalReplies: commentTotalReplies,
   } = comment;
 
   const {
     replies,
     loadMore,
     isReachingEnd,
-    repliesLoading,
+    loading,
     setLike: setReplyLike,
-    totalReplies,
-    commentLoading,
   } = useReplies({
     post,
     commentId,
@@ -56,7 +57,6 @@ export default function PostComment({
   const router = useRouter();
   const { user } = useUser();
 
-  if (!post) return <p>loading...</p>;
   const liked = user ? likes.includes(user.username) : false;
   const writtenByAuthor = authorUsername === post.authorUsername;
 
@@ -119,21 +119,20 @@ export default function PostComment({
                 ))}
               </ul>
             )}
-            {totalReplies - replies.length > 0 &&
-              !repliesLoading &&
+            {commentTotalReplies - replies.length > 0 &&
+              !loading &&
               !isReachingEnd && (
                 <button
                   onClick={loadMore}
-                  disabled={repliesLoading}
+                  disabled={loading}
                   className='my-2 w-full py-1 text-start text-gray-500'
+                  id={`${REPLIES_LIST_ID}-${comment.id}`}
                 >
-                  {!repliesLoading &&
-                    `⸺ View ${totalReplies - replies.length} more`}
+                  {!loading &&
+                    `⸺ View ${commentTotalReplies - replies.length} more`}
                 </button>
               )}
-            {(repliesLoading || commentLoading) && (
-              <Loading className='my-1 w-10' />
-            )}
+            {loading && <Loading className='my-1 w-10' />}
           </div>
         </div>
       </div>
