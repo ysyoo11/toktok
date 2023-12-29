@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 
@@ -8,22 +9,29 @@ import { COMMENTS_LIST_ID } from './modal/CommentsModal';
 import { REPLIES_LIST_ID } from './PostComment';
 
 type Props = {
-  mode: 'reply' | 'comment';
-  replyTarget: { username: string; commentId: string };
+  mode?: 'reply' | 'comment';
+  replyTarget?: { username: string; commentId: string };
+  addReply?: (commentId: string, reply: string) => Promise<void>;
   addComment: (comment: string) => Promise<void>;
-  addReply: (commentId: string, reply: string) => Promise<void>;
+  hasTopBorder?: boolean;
+  className?: string;
 };
 
 export default function CommentForm({
-  mode,
-  replyTarget: { username, commentId },
+  mode = 'comment',
+  replyTarget,
   addComment,
   addReply,
+  hasTopBorder = true,
+  className,
 }: Props) {
   const { user } = useUser();
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const username = replyTarget?.username ?? '';
+  const commentId = replyTarget?.commentId ?? '';
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -52,7 +60,7 @@ export default function CommentForm({
     e.preventDefault();
     if (!user) return router.push('/signin', { scroll: false });
     setLoading(true);
-    mode === 'reply'
+    mode === 'reply' && addReply
       ? await addReply(commentId, comment).then(() => scrollToReply())
       : await addComment(comment).then(() => scrollToTop());
     setComment('');
@@ -66,7 +74,15 @@ export default function CommentForm({
   }, [mode]);
 
   return (
-    <div className='sticky bottom-0 flex w-full items-center border-t bg-white px-4 py-3'>
+    <div
+      className={clsx(
+        'flex w-full items-center bg-white px-4 py-3',
+        {
+          'border-t': hasTopBorder,
+        },
+        className,
+      )}
+    >
       <Avatar
         image={user ? user.imageUrl : ''}
         name={user ? user.username : ''}

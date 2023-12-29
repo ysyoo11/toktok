@@ -124,6 +124,7 @@ export default function CommentsModal({
                   replyTarget={replyTarget}
                   addComment={addComment}
                   addReply={addReply}
+                  className='sticky bottom-0'
                 />
               </Dialog.Panel>
             </Transition.Child>

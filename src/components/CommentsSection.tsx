@@ -34,6 +34,7 @@ export default function CommentsSection({ post }: Props) {
         replyTarget={replyTarget}
         addComment={addComment}
         addReply={addReply}
+        className='sticky bottom-0'
       />
     </>
   );
