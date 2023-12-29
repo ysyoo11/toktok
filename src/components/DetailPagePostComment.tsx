@@ -1,47 +1,37 @@
 import { HeartIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as SolidHeartIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction } from 'react';
 import { format } from 'timeago.js';
 
+import { usePostStore } from '@/context/PostContext';
 import useReplies from '@/hooks/useReplies';
 import { useUser } from '@/hooks/useUser';
+import { Comment, SimplePost } from '@/model/post';
 
 import Avatar from './Avatar';
 import PostCommentReply from './PostCommentReply';
 import Loading from './ui/Loading';
 import ToggleButton from './ui/ToggleButton';
 
-import type { Comment, SimplePost } from '@/model/post';
-
 type Props = {
-  comment: Comment;
   post: SimplePost;
-  setLike: (comment: Comment, username: string, like: boolean) => Promise<void>;
-  setMode: Dispatch<SetStateAction<'comment' | 'reply'>>;
-  setReplyTarget: Dispatch<
-    SetStateAction<{ username: string; commentId: string }>
-  >;
+  comment: Comment;
 };
 
-export const REPLIES_LIST_ID = 'replies-list';
-
-export default function PostComment({
-  comment,
-  post,
-  setLike,
-  setMode,
-  setReplyTarget,
-}: Props) {
+export default function DetailPagePostComment({ post, comment }: Props) {
   const {
     authorImage,
     authorUsername,
     text,
     likes,
-    id: commentId,
     createdAt,
+    id: commentId,
     totalReplies: commentTotalReplies,
   } = comment;
+
+  const { user } = useUser();
+  const router = useRouter();
+  const { setLike } = usePostStore();
 
   const {
     replies,
@@ -54,9 +44,6 @@ export default function PostComment({
     commentId,
   });
 
-  const router = useRouter();
-  const { user } = useUser();
-
   const liked = user ? likes.includes(user.username) : false;
   const writtenByAuthor = authorUsername === post.authorUsername;
 
@@ -64,7 +51,6 @@ export default function PostComment({
     if (!user) return router.push('/signin', { scroll: false });
     setLike(comment, user.username, isLiked);
   };
-
   return (
     <div className='flex w-full items-center justify-between xs:py-2'>
       <div className='flex w-full'>
@@ -99,8 +85,9 @@ export default function PostComment({
               className='text-sm text-gray-500'
               onClick={(e) => {
                 e.stopPropagation();
-                setMode('reply');
-                setReplyTarget({ username: authorUsername, commentId });
+                // TODO:
+                // setMode('reply');
+                // setReplyTarget({ username: authorUsername, commentId });
               }}
             >
               Reply
@@ -125,7 +112,7 @@ export default function PostComment({
                 onClick={loadMore}
                 disabled={loading}
                 className='my-2 w-full py-1 text-start text-gray-500'
-                id={`${REPLIES_LIST_ID}-${comment.id}`}
+                // id={`${REPLIES_LIST_ID}-${comment.id}`} TODO:
               >
                 {!loading &&
                   `⸺ View ${commentTotalReplies - replies.length} more`}
