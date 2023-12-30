@@ -1,4 +1,6 @@
 import {
+  Dispatch,
+  SetStateAction,
   createContext,
   useCallback,
   useContext,
@@ -17,7 +19,11 @@ import { Comment, SimplePost } from '@/model/post';
 import { POLICY } from '@/policy';
 import { VIDEO_SWR_KEY } from '@/swr';
 
-export type PostState = {
+type ReplyTarget = {
+  username: string;
+  commentId: string;
+};
+export type PostStore = {
   comments: Comment[];
   page: number;
   loading: boolean;
@@ -26,20 +32,24 @@ export type PostState = {
   loadMore: () => void;
   addComment: (comment: string) => Promise<void>;
   addReply: (commentId: string, reply: string) => Promise<void>;
+  replyTarget: ReplyTarget | null;
+  setReplyTarget: Dispatch<SetStateAction<ReplyTarget | null>>;
 };
 
-export const PostContext = createContext<PostState | undefined>(undefined);
+export const PostContext = createContext<PostStore | undefined>(undefined);
 
 type Props = {
   post: SimplePost;
+  location: 'modal' | 'detail-page';
   children: React.ReactNode;
 };
-export function PostProvider({ post, children }: Props) {
+export function PostProvider({ post, children, location }: Props) {
   const { id: postId } = post;
-  const COMMENT_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENTS}-${postId}`;
+  const COMMENT_SWR_BASE_KEY = `${VIDEO_SWR_KEY.GET_POST_COMMENTS}-${location}-${postId}`;
   const { mutate } = useSWRConfig();
   const [page, setPage] = useState(1);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
 
   const lastCommentDateRef = useRef('0');
   const addCommentFlagRef = useRef(false);
@@ -157,7 +167,7 @@ export function PostProvider({ post, children }: Props) {
     }
   }, [comments.length]);
 
-  const value = useMemo<PostState>(
+  const value = useMemo<PostStore>(
     () => ({
       page,
       comments,
@@ -167,8 +177,19 @@ export function PostProvider({ post, children }: Props) {
       loadMore,
       addReply,
       addComment,
+      replyTarget,
+      setReplyTarget,
     }),
-    [page, comments, isLoading, setLike, isReachingEnd, addReply, addComment],
+    [
+      page,
+      comments,
+      isLoading,
+      setLike,
+      isReachingEnd,
+      addReply,
+      addComment,
+      replyTarget,
+    ],
   );
 
   return <PostContext.Provider value={value}>{children}</PostContext.Provider>;

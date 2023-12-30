@@ -5,7 +5,8 @@ import { useState } from 'react';
 import { SimplePost } from '@/model/post';
 import { baseUrl } from '@/utils/env';
 
-import CommentsSection from './CommentsSection';
+import CommentForm from './CommentForm';
+import CommentsList from './CommentsList';
 import CreatorVideosSection from './CreatorVideosSection';
 import PostEngagementBar from './PostEngagementBar';
 import PostInfo from './PostInfo';
@@ -54,7 +55,16 @@ export default function PostDetailSidebar({ post }: Props) {
               Creator videos
             </button>
           </div>
-          {view === 'comments' && <CommentsSection post={post} />}
+          {view === 'comments' && (
+            <>
+              <CommentsList
+                post={post}
+                location='mobile-sidebar'
+                className='px-6 pt-1'
+              />
+              <CommentForm className='sticky bottom-0 px-4' />
+            </>
+          )}
           {view === 'videos' && (
             <CreatorVideosSection username={authorUsername} />
           )}

@@ -47,7 +47,7 @@ export default function PostDetailMobileEngagementBar({ post }: Props) {
   const handleFollow = () => {};
 
   return (
-    <>
+    <div className='basis-1/5 pb-2'>
       <ul className='flex flex-col items-center space-y-3'>
         <li>
           <PostDetailMobileFollowButton
@@ -88,6 +88,6 @@ export default function PostDetailMobileEngagementBar({ post }: Props) {
         post={post}
         totalComments={comments}
       />
-    </>
+    </div>
   );
 }
