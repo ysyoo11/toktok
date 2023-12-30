@@ -1,5 +1,6 @@
 import { HeartIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
+import { useRef } from 'react';
 import { format } from 'timeago.js';
 
 import { SimplePost } from '@/model/post';
@@ -12,6 +13,17 @@ export default function SimpleVideoCard({
   post: { videoUrl, id, authorUsername, likes, createdAt, caption },
 }: Props) {
   const router = useRouter();
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const play = () => {
+    if (!videoRef.current) return;
+    videoRef.current.play();
+  };
+  const stop = () => {
+    if (!videoRef.current) return;
+    videoRef.current.pause();
+    videoRef.current.currentTime = 0;
+  };
 
   const onClick = () => {
     router.push(`/post/${id}`, { scroll: false });
@@ -19,8 +31,17 @@ export default function SimpleVideoCard({
 
   return (
     <div onClick={onClick} className='cursor-pointer'>
-      <div className='relative w-full overflow-hidden rounded-md'>
-        <video src={videoUrl} className=' object-fill object-center' />
+      <div
+        className='relative w-full overflow-hidden rounded-md'
+        onMouseEnter={play}
+        onMouseLeave={stop}
+      >
+        <video
+          ref={videoRef}
+          src={videoUrl}
+          muted
+          className='object-fill object-center'
+        />
       </div>
       <p className='mt-1.5 line-clamp-3 text-sm font-semibold'>{caption}</p>
       <span className='text-xs text-gray-500'>{authorUsername}</span>
