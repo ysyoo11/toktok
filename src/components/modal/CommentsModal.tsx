@@ -1,12 +1,11 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Fragment } from 'react';
-import { InView } from 'react-intersection-observer';
 
 import { usePostStore } from '@/context/PostContext';
 
 import CommentForm from '../CommentForm';
-import PostComment from '../PostComment';
+import CommentsList from '../CommentsList';
 import Loading from '../ui/Loading';
 
 import type { SimplePost } from '@/model/post';
@@ -75,30 +74,13 @@ export default function CommentsModal({
                   </div>
                 )}
                 {comments.length > 0 && (
-                  <ul
-                    className='h-max max-h-96 w-full space-y-4 overflow-y-auto px-4'
-                    onClick={() => setReplyTarget(null)}
-                  >
-                    {comments.map((comment) => (
-                      <li key={comment.id}>
-                        <PostComment comment={comment} post={post} />
-                      </li>
-                    ))}
-                    {loading && <Loading className='w-12' />}
-                    {!isReachingEnd && (
-                      <div className='py-2'>
-                        <InView
-                          as='div'
-                          rootMargin='24px'
-                          onChange={(inView) => {
-                            if (inView) loadMore();
-                          }}
-                        />
-                      </div>
-                    )}
-                  </ul>
+                  <CommentsList
+                    post={post}
+                    location='mobile-modal'
+                    className='h-max max-h-96 w-full space-y-4 px-4'
+                  />
                 )}
-                <CommentForm className='sticky bottom-0' />
+                <CommentForm className='sticky bottom-0 px-4' />
               </Dialog.Panel>
             </Transition.Child>
           </div>
