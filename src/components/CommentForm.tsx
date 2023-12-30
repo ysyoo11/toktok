@@ -45,7 +45,7 @@ export default function CommentForm({ hasTopBorder = true, className }: Props) {
   return (
     <div
       className={clsx(
-        'flex w-full items-center bg-white px-4 py-3',
+        'flex w-full items-center bg-white py-3',
         {
           'border-t': hasTopBorder,
         },

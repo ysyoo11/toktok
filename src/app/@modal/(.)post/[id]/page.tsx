@@ -3,7 +3,7 @@ import { Dialog } from '@headlessui/react';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
-import ModalVideoPlayer from '@/components/ModalVideoPlayer';
+import DetailVideoPlayer from '@/components/DetailVideoPlayer';
 import PostDetailSidebar from '@/components/PostDetailSidebar';
 import Loading from '@/components/ui/Loading';
 import { PostProvider } from '@/context/PostContext';
@@ -46,7 +46,7 @@ export default function PostDetailModal({ params: { id } }: Props) {
           <Dialog.Panel className='h-full w-full'>
             <div className='flex h-full w-full items-center overflow-y-auto'>
               <div className='sticky top-0 z-[1] h-full w-full'>
-                <ModalVideoPlayer post={post} />
+                <DetailVideoPlayer location='modal' post={post} />
               </div>
               <PostDetailSidebar post={post} />
             </div>

@@ -1,4 +1,5 @@
 import { PauseIcon, PlayIcon } from '@heroicons/react/24/solid';
+import clsx from 'clsx';
 import {
   ChangeEvent,
   MouseEvent,
@@ -17,9 +18,10 @@ import VideoController from './VideoController';
 
 type Props = {
   post: SimplePost;
+  location: 'modal' | 'page';
 };
 
-export default function ModalVideoPlayer({ post }: Props) {
+export default function DetailVideoPlayer({ post, location }: Props) {
   const { videoUrl } = post;
 
   const [isPlaying, setIsPlaying] = useState(true);
@@ -77,7 +79,14 @@ export default function ModalVideoPlayer({ post }: Props) {
   }, [volume]);
 
   return (
-    <div className='group relative flex h-full w-full cursor-pointer items-center overflow-hidden xs:min-w-[512px]'>
+    <div
+      className={clsx(
+        'group relative flex w-full cursor-pointer items-center overflow-hidden',
+        {
+          'h-full xs:min-w-[512px]': location === 'modal',
+        },
+      )}
+    >
       <div className='pointer-events-none absolute left-1/2 top-1/2 z-[1] -translate-x-1/2 -translate-y-1/2'>
         {isPlaying ? (
           <PlayIcon className='h-32 w-32 animate-fade-out text-white' />
@@ -85,7 +94,12 @@ export default function ModalVideoPlayer({ post }: Props) {
           <PauseIcon className='h-32 w-32 animate-fade-out text-white' />
         )}
       </div>
-      <div className='relative mx-auto flex h-full xs:w-max'>
+      <div
+        className={clsx('relative flex w-full', {
+          'h-full bg-gray-50/90 backdrop-blur-lg': location === 'page',
+          'h-full': location === 'modal',
+        })}
+      >
         <video
           onClick={togglePlayPause}
           ref={videoRef}
@@ -95,6 +109,7 @@ export default function ModalVideoPlayer({ post }: Props) {
           // autoPlay
           muted={isMuted}
           loop
+          className='mx-auto'
         />
         <div className='absolute bottom-0 flex h-max w-full items-end bg-gradient-to-b from-transparent to-black/50 pb-4 transition-opacity group-hover:opacity-100 xs:opacity-0'>
           <div className='relative w-full space-y-1.5 px-4'>

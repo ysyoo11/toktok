@@ -62,7 +62,7 @@ export default function PostDetailSidebar({ post }: Props) {
                 location='mobile-sidebar'
                 className='px-6 pt-1'
               />
-              <CommentForm className='sticky bottom-0' />
+              <CommentForm className='sticky bottom-0 px-4' />
             </>
           )}
           {view === 'videos' && (
