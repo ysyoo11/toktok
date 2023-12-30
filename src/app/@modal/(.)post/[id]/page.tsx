@@ -31,7 +31,7 @@ export default function PostDetailModal({ params: { id } }: Props) {
     );
 
   return (
-    <PostProvider post={post}>
+    <PostProvider post={post} location='modal'>
       <Dialog
         as='div'
         className='relative z-10 h-screen'

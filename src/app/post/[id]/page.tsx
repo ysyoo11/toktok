@@ -2,7 +2,8 @@
 
 import { notFound } from 'next/navigation';
 
-import DetailPageCommentsSection from '@/components/DetailPageCommentsSection';
+import CommentForm from '@/components/CommentForm';
+import CommentsList from '@/components/CommentsList';
 import ModalVideoPlayer from '@/components/ModalVideoPlayer';
 import PostGridList from '@/components/PostGridList';
 import PostInfo from '@/components/PostInfo';
@@ -31,7 +32,7 @@ export default function PostDetailPage({ params: { id } }: Props) {
     );
   }
   return (
-    <PostProvider post={post}>
+    <PostProvider post={post} location='detail-page'>
       <div className='mx-auto mt-4 flex h-full max-h-[640px] w-full justify-center'>
         <ModalVideoPlayer post={post} />
       </div>
@@ -43,7 +44,15 @@ export default function PostDetailPage({ params: { id } }: Props) {
       ) : (
         <PostGridList posts={posts} className='mt-6' />
       )}
-      <DetailPageCommentsSection post={post} />
+      <section className='mt-4'>
+        <div className='my-6 h-[1.5px] bg-gray-200' />
+        <p className='mb-2 text-lg font-semibold'>
+          {post.comments} {post.comments === 1 ? 'comment' : 'comments'}
+        </p>
+        <CommentForm hasTopBorder={false} />
+        <div className='my-4 h-[1.5px] bg-gray-200' />
+        <CommentsList location='detail-page' post={post} />
+      </section>
     </PostProvider>
   );
 }
