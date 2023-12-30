@@ -40,9 +40,7 @@ export default async function RootLayout({
             <>
               <div className='flex w-full' id='base-route'>
                 <SideNav />
-                <div className='mx-auto mt-16 w-full max-w-3xl px-3 lg:pl-0'>
-                  {children}
-                </div>
+                <div className='mt-16 w-full px-3'>{children}</div>
               </div>
               <div>{modal}</div>
             </>
