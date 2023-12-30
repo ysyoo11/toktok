@@ -1,6 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import { InView } from 'react-intersection-observer';
 
 import { usePostStore } from '@/context/PostContext';
@@ -18,28 +18,14 @@ type Props = {
   totalComments: number;
 };
 
-export const COMMENTS_LIST_ID = 'comments-list' as const;
-
 export default function CommentsModal({
   isOpen,
   onClose,
   post,
   totalComments,
 }: Props) {
-  const {
-    comments,
-    loading,
-    loadMore,
-    isReachingEnd,
-    setLike,
-    addComment,
-    addReply,
-  } = usePostStore();
-  const [mode, setMode] = useState<'comment' | 'reply'>('comment');
-  const [replyTarget, setReplyTarget] = useState<{
-    username: string;
-    commentId: string;
-  }>({ username: '', commentId: '' });
+  const { comments, loading, loadMore, isReachingEnd, setReplyTarget } =
+    usePostStore();
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -91,18 +77,11 @@ export default function CommentsModal({
                 {comments.length > 0 && (
                   <ul
                     className='h-max max-h-96 w-full space-y-4 overflow-y-auto px-4'
-                    onClick={() => setMode('comment')}
-                    id={COMMENTS_LIST_ID}
+                    onClick={() => setReplyTarget(null)}
                   >
                     {comments.map((comment) => (
                       <li key={comment.id}>
-                        <PostComment
-                          comment={comment}
-                          post={post}
-                          setLike={setLike}
-                          setMode={setMode}
-                          setReplyTarget={setReplyTarget}
-                        />
+                        <PostComment comment={comment} post={post} />
                       </li>
                     ))}
                     {loading && <Loading className='w-12' />}
@@ -119,13 +98,7 @@ export default function CommentsModal({
                     )}
                   </ul>
                 )}
-                <CommentForm
-                  mode={mode}
-                  replyTarget={replyTarget}
-                  addComment={addComment}
-                  addReply={addReply}
-                  className='sticky bottom-0'
-                />
+                <CommentForm className='sticky bottom-0' />
               </Dialog.Panel>
             </Transition.Child>
           </div>

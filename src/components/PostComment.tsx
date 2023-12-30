@@ -1,9 +1,9 @@
 import { HeartIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as SolidHeartIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction } from 'react';
 import { format } from 'timeago.js';
 
+import { usePostStore } from '@/context/PostContext';
 import useReplies from '@/hooks/useReplies';
 import { useUser } from '@/hooks/useUser';
 
@@ -17,22 +17,9 @@ import type { Comment, SimplePost } from '@/model/post';
 type Props = {
   comment: Comment;
   post: SimplePost;
-  setLike: (comment: Comment, username: string, like: boolean) => Promise<void>;
-  setMode: Dispatch<SetStateAction<'comment' | 'reply'>>;
-  setReplyTarget: Dispatch<
-    SetStateAction<{ username: string; commentId: string }>
-  >;
 };
 
-export const REPLIES_LIST_ID = 'replies-list';
-
-export default function PostComment({
-  comment,
-  post,
-  setLike,
-  setMode,
-  setReplyTarget,
-}: Props) {
+export default function PostComment({ comment, post }: Props) {
   const {
     authorImage,
     authorUsername,
@@ -43,6 +30,7 @@ export default function PostComment({
     totalReplies: commentTotalReplies,
   } = comment;
 
+  const { setLike, setReplyTarget } = usePostStore();
   const {
     replies,
     loadMore,
@@ -99,7 +87,6 @@ export default function PostComment({
               className='text-sm text-gray-500'
               onClick={(e) => {
                 e.stopPropagation();
-                setMode('reply');
                 setReplyTarget({ username: authorUsername, commentId });
               }}
             >
@@ -125,7 +112,6 @@ export default function PostComment({
                 onClick={loadMore}
                 disabled={loading}
                 className='my-2 w-full py-1 text-start text-gray-500'
-                id={`${REPLIES_LIST_ID}-${comment.id}`}
               >
                 {!loading &&
                   `⸺ View ${commentTotalReplies - replies.length} more`}
