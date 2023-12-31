@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
       },
       caption,
       visibility: 'public',
+      views: 0,
       comments: [],
       likes: [],
       saved: 0,
