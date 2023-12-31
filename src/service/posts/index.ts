@@ -1,8 +1,9 @@
 import { groq } from 'next-sanity';
 
+import { POLICY } from '@/policy';
 import { client } from '@/service/sanity';
 
-import type { RawPost } from '@/model/post';
+import type { RawPost, UserPost } from '@/model/post';
 
 const simplePostProjection = `
   ...,
@@ -42,6 +43,25 @@ export async function getPostById(id: string) {
   }`,
     )
     .then(refinePost);
+}
+
+export async function getPostsByUsername(
+  username: string,
+  lastPostDate: string,
+): Promise<UserPost[]> {
+  return await client.fetch(
+    groq`*[_type == 'video' && author._ref in *[_type=='user' && username == '${username}']._id][${
+      lastPostDate === '0' ? true : '_createdAt < $lastPostDate'
+    }] | order(_createdAt desc) [0...${POLICY.POST_FETCH_LIMIT}] {
+      "id": _id,
+      "createdAt": _createdAt,
+      videoUrl,
+      caption,
+      visibility,
+      views
+  }`,
+    { lastPostDate },
+  );
 }
 
 function mapPosts(posts: RawPost[]) {
