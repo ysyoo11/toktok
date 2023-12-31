@@ -152,7 +152,7 @@ const video = {
       ],
     },
     {
-      name: 'view',
+      name: 'views',
       title: 'Views',
       type: 'number',
     },
