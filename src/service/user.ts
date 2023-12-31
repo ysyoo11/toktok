@@ -4,7 +4,7 @@ import { groq } from 'next-sanity';
 
 import { client } from './sanity';
 
-import type { User } from '@/model/user';
+import type { ProfileUser, User } from '@/model/user';
 
 export async function getUsers(): Promise<User[]> {
   return await client.fetch(
@@ -38,16 +38,19 @@ export async function getUserById(id: string): Promise<User> {
   );
 }
 
-export async function getUserByUsername(username: string): Promise<User> {
+export async function getUserByUsername(
+  username: string,
+): Promise<ProfileUser> {
   return await client.fetch(
     groq`*[_type == 'user' && username == '${username}'][0]{
-    ...,
     "id": _id,
+    "createdAt": _createdAt,
+    username,
+    name,
     imageUrl,
+    bio,
     following[]->{username,imageUrl},
     followers[]->{username,imageUrl},
-    liked[]->{_id},
-    "saved":saved[]->_id
   }`,
   );
 }
