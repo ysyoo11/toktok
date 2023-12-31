@@ -9,20 +9,24 @@ export type AuthUser = {
   image?: string;
 };
 
-export type SimpleUser = Pick<User, 'id' | 'name' | 'username' | 'imageUrl'>;
+export type SimpleUser = Pick<User, 'id' | 'username' | 'name' | 'imageUrl'>;
 
 export type User = {
   id: string;
-  _createdAt: Date;
-  _type: 'user';
+  createdAt: string;
   name: string;
   username: string;
   imageUrl: string;
   bio: string;
   following: SimpleUser[];
-  follower: SimpleUser[];
+  followers: SimpleUser[];
   videos: SimplePost[];
   liked: SimplePost[];
   saved: SimplePost[];
   collections: Collection[];
 };
+
+export type ProfileUser = Omit<
+  User,
+  'videos' | 'liked' | 'saved' | 'collections'
+>;

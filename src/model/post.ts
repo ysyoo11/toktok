@@ -27,9 +27,14 @@ export type Post = {
   likes: string[];
   saved: number;
   comments: Comment[];
-  view: number;
+  views: number;
   tags?: string[];
 };
+
+export type UserPost = Pick<
+  Post,
+  'id' | 'createdAt' | 'videoUrl' | 'caption' | 'visibility' | 'views'
+>;
 
 export type Comment = {
   id: string;
