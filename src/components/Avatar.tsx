@@ -5,7 +5,8 @@ type Props = {
   className?: string;
   image: string;
   name: string;
-  size?: 'xs' | 'sm' | 'base' | 'lg';
+  priority?: boolean;
+  size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl';
   hasBorder?: boolean;
 };
 
@@ -15,6 +16,7 @@ export default function Avatar({
   name,
   size = 'base',
   hasBorder = false,
+  priority,
 }: Props) {
   return (
     <div
@@ -25,6 +27,7 @@ export default function Avatar({
           'h-10 w-10': size === 'sm',
           'h-14 w-14': size === 'base',
           'h-16 w-16': size === 'lg',
+          'h-20 w-20': size === 'xl',
           'border-2 border-white': hasBorder,
         },
         className,
@@ -36,6 +39,7 @@ export default function Avatar({
         fill
         className='object-cover object-center'
         sizes={size === 'lg' ? `10rem` : `3.5rem`}
+        priority={priority}
       />
     </div>
   );
