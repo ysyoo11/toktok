@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import { useState } from 'react';
 import useSWRImmutable from 'swr/immutable';
 
+import ProfileCollectionsSection from '@/components/ProfileCollectionsSection';
 import ProfilePostsSection from '@/components/ProfilePostsSection';
 import ProfileUserSection from '@/components/ProfileUserSection';
 import Loading from '@/components/ui/Loading';
@@ -18,7 +19,7 @@ type Props = {
   };
 };
 
-const tabs = ['videos', 'favorites', 'liked'] as const;
+const tabs = ['videos', 'collections', 'liked'] as const;
 type ProfileTab = (typeof tabs)[number];
 
 export default function ProfilePage({ params: { username } }: Props) {
@@ -66,6 +67,9 @@ export default function ProfilePage({ params: { username } }: Props) {
         ))}
       </ul>
       {selectedTab === 'videos' && <ProfilePostsSection username={username} />}
+      {selectedTab === 'collections' && (
+        <ProfileCollectionsSection username={username} />
+      )}
     </main>
   );
 }

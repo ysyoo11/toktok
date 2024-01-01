@@ -20,8 +20,8 @@ export default function ProfilePostsSection({ username }: Props) {
     );
 
   return (
-    <>
-      <ul className='mt-2 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'>
+    <section className='mt-2 lg:mt-4'>
+      <ul className='grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'>
         {posts.map((post) => (
           <li key={`user-post-${post.id}`}>
             <ProfilePostCard post={post} />
@@ -40,6 +40,6 @@ export default function ProfilePostsSection({ username }: Props) {
           />
         </div>
       )}
-    </>
+    </section>
   );
 }
