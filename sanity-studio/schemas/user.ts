@@ -119,8 +119,8 @@ const user = {
               type: 'boolean',
             },
             {
-              name: 'videos',
-              title: 'Videos',
+              name: 'posts',
+              title: 'Posts',
               type: 'array',
               of: [{type: 'reference', to: [{type: 'video'}]}],
             },

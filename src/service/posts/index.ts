@@ -64,6 +64,39 @@ export async function getPostsByUsername(
   );
 }
 
+export async function createPost(
+  file: File,
+  authorId: string,
+  caption: string,
+) {
+  const { url: videoUrl, _id } = await client.assets.upload('file', file);
+
+  const postData = {
+    _type: 'video',
+    id: _id,
+    videoUrl,
+    author: {
+      _type: 'reference',
+      _ref: authorId,
+    },
+    caption,
+    visibility: 'public',
+    views: 0,
+    comments: [],
+    likes: [],
+    saved: 0,
+    tags: [],
+  };
+
+  const post = await client.create(postData);
+
+  return await client
+    .patch(authorId)
+    .setIfMissing({ posts: [] })
+    .insert('after', 'posts[-1]', [{ _type: 'reference', _ref: post._id }])
+    .commit({ autoGenerateArrayKeys: true });
+}
+
 function mapPosts(posts: RawPost[]) {
   return posts.map((post: RawPost) => {
     const comments = getTotalComments(post);
