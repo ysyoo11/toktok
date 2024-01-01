@@ -40,7 +40,6 @@ export async function createCollection(
       {
         id,
         createdAt: new Date(),
-        author: { _type: 'reference', _ref: uid },
         name,
         isPrivate,
         posts: [],

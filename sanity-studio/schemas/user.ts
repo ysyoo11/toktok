@@ -103,6 +103,11 @@ const user = {
           type: 'document',
           fields: [
             {
+              name: 'id',
+              title: 'ID',
+              type: 'string',
+            },
+            {
               name: 'name',
               title: 'Name',
               type: 'string',
@@ -123,6 +128,11 @@ const user = {
               title: 'Posts',
               type: 'array',
               of: [{type: 'reference', to: [{type: 'video'}]}],
+            },
+            {
+              name: 'createdAt',
+              title: 'Created At',
+              type: 'datetime',
             },
           ],
         },
