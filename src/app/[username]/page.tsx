@@ -1,17 +1,11 @@
 'use client';
 
-import { LockClosedIcon } from '@heroicons/react/24/solid';
-import clsx from 'clsx';
-import { notFound } from 'next/navigation';
-import { useState } from 'react';
-import useSWRImmutable from 'swr/immutable';
+import { InView } from 'react-intersection-observer';
 
-import ProfileCollectionsSection from '@/components/ProfileCollectionsSection';
-import ProfilePostsSection from '@/components/ProfilePostsSection';
-import ProfileUserSection from '@/components/ProfileUserSection';
+import ProfilePostCard from '@/components/ProfilePostCard';
+import SkeletonRectangle from '@/components/skeleton/SkeletonRectangle';
 import Loading from '@/components/ui/Loading';
-import { useUser } from '@/hooks/useUser';
-import { ProfileUser } from '@/model/user';
+import useProfilePosts from '@/hooks/useProfilePosts';
 
 type Props = {
   params: {
@@ -19,57 +13,43 @@ type Props = {
   };
 };
 
-const tabs = ['videos', 'collections', 'liked'] as const;
-type ProfileTab = (typeof tabs)[number];
-
 export default function ProfilePage({ params: { username } }: Props) {
-  const { data: user, error } = useSWRImmutable<ProfileUser>(
-    `/api/user/${username}`,
-  );
-  const { user: me } = useUser();
+  const { posts, isReachingEnd, loadMore, loading } = useProfilePosts(username);
 
-  const [selectedTab, setSelectedTab] = useState<ProfileTab>('videos');
-
-  if (error) notFound();
-
-  if (!user)
+  if (posts.length === 0 && loading)
     return (
-      <div className='py-20'>
-        <Loading className='w-12' />
-      </div>
+      <section className='mt-2 lg:mt-4'>
+        <ul className='grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'>
+          {[...new Array(6)].map((_, idx) => (
+            <li key={`skeleton-box-${idx}`}>
+              <SkeletonRectangle className='aspect-[4/6]' />
+            </li>
+          ))}
+        </ul>
+      </section>
     );
 
-  const isMyPage = user.id === me?.id;
-
   return (
-    <main className='mx-auto max-w-7xl pb-20'>
-      <ProfileUserSection user={user} isMyPage={isMyPage} />
-      <ul className='mt-4 flex w-full border-b'>
-        {tabs.map((tab, idx) => (
-          <li
-            key={`profile-tab-${idx}`}
-            className={clsx('flex basis-1/3 justify-center border-b-2', {
-              'border-transparent text-gray-400': selectedTab !== tab,
-              'border-gray-900 text-gray-900': selectedTab === tab,
-              hidden: !isMyPage && tab !== 'videos',
-            })}
-          >
-            <button
-              className={clsx(
-                'flex w-full items-center justify-center space-x-1 pb-1.5 text-sm sm:text-base',
-              )}
-              onClick={() => setSelectedTab(tab)}
-            >
-              {tab !== 'videos' && <LockClosedIcon className='h-4 w-4' />}
-              <span className='capitalize'>{tab}</span>
-            </button>
+    <section className='mt-2 lg:mt-4'>
+      <ul className='grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'>
+        {posts.map((post) => (
+          <li key={`user-post-${post.id}`}>
+            <ProfilePostCard post={post} />
           </li>
         ))}
       </ul>
-      {selectedTab === 'videos' && <ProfilePostsSection username={username} />}
-      {selectedTab === 'collections' && (
-        <ProfileCollectionsSection username={username} />
+      {loading && <Loading className='w-12 py-20' />}
+      {!isReachingEnd && (
+        <div className='py-2'>
+          <InView
+            as='div'
+            rootMargin='24px'
+            onChange={(inView) => {
+              if (inView) loadMore();
+            }}
+          />
+        </div>
       )}
-    </main>
+    </section>
   );
 }

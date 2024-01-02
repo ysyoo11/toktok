@@ -1,91 +1,67 @@
-import { PencilSquareIcon } from '@heroicons/react/24/outline';
+'use client';
+
+import { LockClosedIcon } from '@heroicons/react/24/solid';
+import clsx from 'clsx';
+import Link from 'next/link';
+import { notFound, usePathname } from 'next/navigation';
+import useSWRImmutable from 'swr/immutable';
 
 import { useUser } from '@/hooks/useUser';
 import { ProfileUser } from '@/model/user';
 
-import Avatar from './Avatar';
-import Button from './ui/Button';
+import ProfileUserInfo from './ProfileUserInfo';
+
+const tabs = ['videos', 'collections', 'liked'] as const;
 
 type Props = {
-  user: ProfileUser;
-  isMyPage: boolean;
+  username: string;
 };
 
-export default function ProfileUserSection({ user }: Props) {
-  const { imageUrl, name, bio, id, username } = user;
+export default function ProfileUserSection({ username }: Props) {
+  const detailedPath = usePathname().split(`/${username}`)[1];
+  const selectedTab =
+    detailedPath === '' ? 'videos' : detailedPath.replace('/', '');
+  const { data: user, error } = useSWRImmutable<ProfileUser>(
+    `/api/user/${username}`,
+  );
   const { user: me } = useUser();
 
-  const isMyPage = id === me?.id;
+  if (error) notFound();
+
+  const isMyPage = user && me ? user.id === me.id : false;
   const isFollowing = me
-    ? me.following.find((user) => user.username === username)
+    ? Boolean(me.following.find((user) => user.username === username))
     : false;
 
   return (
     <>
-      <div className='mt-4 flex lg:mt-8'>
-        <Avatar
-          size='base'
-          image={imageUrl}
-          name={username}
-          priority
-          className='lg:hidden'
-        />
-        <Avatar
-          size='xl'
-          image={imageUrl}
-          name={username}
-          priority
-          className='hidden lg:block'
-        />
-        <div className='ml-4'>
-          <h2 className='text-lg font-semibold sm:text-xl lg:text-2xl'>
-            {username}
-          </h2>
-          <span className='block text-sm text-gray-800 sm:text-base lg:mt-2 lg:text-lg'>
-            {name}
-          </span>
-          {isMyPage && (
-            <>
-              <Button
-                className='mt-2 flex items-center space-x-1 sm:hidden'
-                color='white'
-                size='xs'
-              >
-                <PencilSquareIcon className='h-4 w-4' />
-                <span>Edit profile</span>
-              </Button>
-              <Button
-                className='mt-2 hidden items-center space-x-2 sm:flex'
-                color='white'
-                size='base'
-              >
-                <PencilSquareIcon className='h-4 w-4' />
-                <span>Edit profile</span>
-              </Button>
-            </>
-          )}
-          {!isMyPage && !isFollowing && (
-            <Button className='mt-2 block' size='xs'>
-              Follow
-            </Button>
-          )}
-        </div>
-      </div>
-      <div className='mt-4 flex space-x-4'>
-        <div className='flex items-center text-sm sm:text-base'>
-          <span className='mr-2 font-semibold'>
-            {user.following ? user.following.length : 0}
-          </span>
-          <span className='text-gray-500'>Following</span>
-        </div>
-        <div className='flex items-center text-sm sm:text-base'>
-          <span className='mr-2 font-semibold'>
-            {user.followers ? user.followers.length : 0}
-          </span>
-          <span className='text-gray-500'>Followers</span>
-        </div>
-      </div>
-      <p className='mt-4 text-sm sm:text-base'>{bio}</p>
+      <ProfileUserInfo
+        user={user}
+        isMyPage={isMyPage}
+        isFollowing={isFollowing}
+      />
+      <ul className='mt-4 flex w-full border-b'>
+        {tabs.map((tab, idx) => (
+          <li
+            key={`profile-tab-${idx}`}
+            className={clsx('flex basis-1/3 justify-center border-b-2', {
+              'border-transparent text-gray-400': selectedTab !== tab,
+              'border-gray-900 text-gray-900': selectedTab === tab,
+              hidden: !isMyPage && tab === 'liked',
+            })}
+          >
+            <Link
+              className={clsx(
+                'flex w-full items-center justify-center space-x-1 pb-1.5 text-sm sm:text-base',
+              )}
+              href={tab === 'videos' ? `/${username}` : `/${username}/${tab}`}
+            >
+              {tab === 'liked' && <LockClosedIcon className='h-4 w-4' />}
+              <span className='capitalize'>{tab}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
