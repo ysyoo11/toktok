@@ -1,6 +1,7 @@
 export const USER_SWR_KEY = {
   GET_ME: '@get-me',
   GET_USER_BY_USERNAME: '@get-user-by-username',
+  GET_COLLECTION_BY_USERNAME: '@get-collection-by-username',
 };
 
 export const VIDEO_SWR_KEY = {

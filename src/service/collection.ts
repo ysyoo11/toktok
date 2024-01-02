@@ -1,6 +1,8 @@
+// TODO:
+// 1. createCollection ✅
 // 1. getAllCollectionsByUsername
 // 2. getPublicCollectionsByUsername
-// ** Fetch 6 collections on each request
+// * Fetch 6 collections on each request
 
 import { groq } from 'next-sanity';
 import uuid4 from 'uuid4';
@@ -9,21 +11,25 @@ import { POLICY } from '@/policy';
 
 import { client } from './sanity';
 
-export async function getAllCollectionsByUsername(
+export async function getCollectionsByUsername(
   username: string,
   lastCollectionDate: string,
+  getOnlyPublic: boolean,
 ) {
   return await client.fetch(
     groq`*[_type == 'user' && username == '${username}'][0]{
       "collections": collections[${
         lastCollectionDate === '0' ? true : 'createdAt < $lastCollectionDate'
+      }${
+        getOnlyPublic ? ' && isPrivate == false' : ''
       }] | order(createdAt desc) [0...${POLICY.COLLETION_FETCH_LIMIT}] {
         id,
-        "key": _key,
         name,
+        createdAt,
         "firstVideoUrl": videos[0]->videoUrl
       }
     }`,
+    { lastCollectionDate },
   );
 }
 
