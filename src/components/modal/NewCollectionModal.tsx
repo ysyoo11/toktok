@@ -4,7 +4,6 @@ import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { FormEvent, Fragment, useState } from 'react';
 
-import { createCollection } from '@/lib/collections';
 import { RULES } from '@/rules';
 
 import Button from '../ui/Button';
@@ -14,23 +13,34 @@ import ToggleSwitch from '../ui/ToggleSwitch';
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  createNewCollection: (name: string, isPrivate: boolean) => Promise<void>;
 };
 
-export default function NewCollectionModal({ isOpen, onClose }: Props) {
+export default function NewCollectionModal({
+  isOpen,
+  onClose,
+  createNewCollection,
+}: Props) {
   const [name, setName] = useState('');
   const [isPrivate, setIsPrivate] = useState(true);
   const [loading, setLoading] = useState(false);
 
+  const initialize = () => {
+    setName('');
+    setIsPrivate(true);
+  };
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await createCollection(name, isPrivate) //
+
+    await createNewCollection(name, isPrivate) //
       .then(() => {
-        // TODO: mutate
+        initialize();
+        onClose();
       })
       .finally(() => {
         setLoading(false);
-        onClose();
       });
   };
 
