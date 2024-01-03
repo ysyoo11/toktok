@@ -32,6 +32,7 @@ export default function ProfilePostCard({
         onMouseLeave={pause}
       >
         <video
+          playsInline
           ref={videoRef}
           src={videoUrl}
           className='object-fill object-center'

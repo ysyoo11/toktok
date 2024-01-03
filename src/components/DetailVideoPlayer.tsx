@@ -86,6 +86,7 @@ export default function DetailVideoPlayer({ post, location }: Props) {
           'h-full xs:min-w-[512px]': location === 'modal',
         },
       )}
+      onClick={togglePlayPause}
     >
       <div className='pointer-events-none absolute left-1/2 top-1/2 z-[1] -translate-x-1/2 -translate-y-1/2'>
         {isPlaying ? (
@@ -101,12 +102,11 @@ export default function DetailVideoPlayer({ post, location }: Props) {
         })}
       >
         <video
-          onClick={togglePlayPause}
           ref={videoRef}
           src={videoUrl}
           playsInline
           onTimeUpdate={onTimeUpdate}
-          // autoPlay
+          autoPlay
           muted={isMuted}
           loop
           className='mx-auto'

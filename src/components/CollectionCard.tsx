@@ -2,11 +2,11 @@ import { BookmarkIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
 
-import { SimpleCollection } from '@/model/collection';
+import { Collection } from '@/model/collection';
 
 type Props = {
   username: string;
-  collection: SimpleCollection;
+  collection: Collection;
 };
 
 export default function CollectionCard({
@@ -20,7 +20,14 @@ export default function CollectionCard({
           'relative aspect-[4/6] overflow-hidden rounded-lg bg-gray-100',
         )}
       >
-        {firstVideoUrl && <video src={firstVideoUrl} muted />}
+        {firstVideoUrl && (
+          <video
+            src={firstVideoUrl}
+            className='h-full w-full object-cover object-center'
+            muted
+            playsInline
+          />
+        )}
         <div className='absolute bottom-0 flex h-1/3 w-full items-end justify-between bg-gradient-to-t from-black/30 to-transparent p-2 text-white'>
           <div>
             <BookmarkIcon className='h-6 w-6' />

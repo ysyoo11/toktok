@@ -94,6 +94,7 @@ export default function VideoPlayer({ videoUrl, id }: Props) {
       className='group relative w-56 cursor-pointer overflow-hidden rounded-lg xs:w-64'
     >
       <video
+        id={id}
         ref={videoRef}
         src={videoUrl}
         playsInline
