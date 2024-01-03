@@ -18,9 +18,10 @@ type Props = {
 };
 
 export default function ProfileUserSection({ username }: Props) {
-  const detailedPath = usePathname().split(`/${username}`)[1];
+  const detailedPath = usePathname().split(`/${username}`)[1] ?? '';
   const selectedTab =
     detailedPath === '' ? 'videos' : detailedPath.replace('/', '');
+
   const { data: user, error } = useSWRImmutable<ProfileUser>(
     `/api/user/${username}`,
   );
@@ -30,7 +31,11 @@ export default function ProfileUserSection({ username }: Props) {
 
   const isMyPage = user && me ? user.id === me.id : false;
   const isFollowing = me
-    ? Boolean(me.following.find((user) => user.username === username))
+    ? Boolean(
+        me.following
+          ? me.following.find((user) => user.username === username)
+          : false,
+      )
     : false;
 
   return (
