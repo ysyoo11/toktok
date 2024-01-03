@@ -3,7 +3,7 @@
 import { InView } from 'react-intersection-observer';
 
 import ProfilePostCard from '@/components/ProfilePostCard';
-import SkeletonRectangle from '@/components/skeleton/SkeletonRectangle';
+import SkeletonProfileCards from '@/components/skeleton/SkeletonProfileCards';
 import Loading from '@/components/ui/Loading';
 import useProfilePosts from '@/hooks/useProfilePosts';
 
@@ -16,18 +16,7 @@ type Props = {
 export default function ProfilePage({ params: { username } }: Props) {
   const { posts, isReachingEnd, loadMore, loading } = useProfilePosts(username);
 
-  if (posts.length === 0 && loading)
-    return (
-      <section className='mt-2 lg:mt-4'>
-        <ul className='grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'>
-          {[...new Array(6)].map((_, idx) => (
-            <li key={`skeleton-box-${idx}`}>
-              <SkeletonRectangle className='aspect-[4/6]' />
-            </li>
-          ))}
-        </ul>
-      </section>
-    );
+  if (posts.length === 0 && loading) return <SkeletonProfileCards />;
 
   return (
     <section className='mt-2 lg:mt-4'>
