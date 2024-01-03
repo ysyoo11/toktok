@@ -20,7 +20,7 @@ export async function GET(
     lastCollectionDate,
     getOnlyPublic,
   )
-    .then(({ collections }) => NextResponse.json(collections, { status: 200 }))
+    .then((collections) => NextResponse.json(collections, { status: 200 }))
     .catch((err) => {
       console.error(err);
       return new Response('Server Error', { status: 500 });

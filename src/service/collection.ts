@@ -1,14 +1,13 @@
 // TODO:
 // 1. createCollection ✅
-// 1. getAllCollectionsByUsername
-// 2. getPublicCollectionsByUsername
-// * Fetch 6 collections on each request
+// 2. getCollectionsByUsername ✅ (public only / all)
+// 3. getCollectionById
 
 import { groq } from 'next-sanity';
-import uuid4 from 'uuid4';
 
 import { POLICY } from '@/policy';
 
+import { userPostProjection } from './posts';
 import { client } from './sanity';
 
 export async function getCollectionsByUsername(
@@ -17,20 +16,40 @@ export async function getCollectionsByUsername(
   getOnlyPublic: boolean,
 ) {
   return await client.fetch(
-    groq`*[_type == 'user' && username == '${username}'][0]{
-      "collections": collections[${
-        lastCollectionDate === '0' ? true : 'createdAt > $lastCollectionDate'
-      }${
-        getOnlyPublic ? ' && isPrivate == false' : ''
-      }] | order(createdAt asc) [0...${POLICY.COLLECTION_FETCH_LIMIT}] {
-        id,
-        name,
-        createdAt,
-        isPrivate,
-        "firstVideoUrl": videos[0]->videoUrl
-      }
+    groq`*[_type == 'collection' && author._ref in *[_type=='user' && username=='${username}']._id][${
+      lastCollectionDate === '0' ? true : '_createdAt > $lastCollectionDate'
+    }${
+      getOnlyPublic ? ' && isPrivate == false' : ''
+    }] | order(_createdAt asc) [0...${POLICY.COLLECTION_FETCH_LIMIT}] {
+      "id": _id,
+      "createdAt": _createdAt,
+      name,
+      isPrivate,
+      "firstVideoUrl": posts[0]->videoUrl,
     }`,
     { lastCollectionDate },
+  );
+}
+
+export async function getCollectionById(
+  username: string,
+  id: string,
+  lastPostKey: string,
+) {
+  return await client.fetch(
+    groq`*[_type == 'collection' && _id == '${id}'][0] {
+      "collection": collections[id == '${id}'][0]{
+        id,
+        name,
+        isPrivate,
+        posts[_key > $lastPostKey] | order(_key asc) [0...1]->{
+          ${userPostProjection}
+        },
+      }
+    }`,
+    {
+      lastPostKey,
+    },
   );
 }
 
@@ -39,18 +58,22 @@ export async function createCollection(
   name: string,
   isPrivate: boolean,
 ) {
-  const id = uuid4();
+  const collectionData = {
+    _type: 'collection',
+    name,
+    isPrivate,
+    posts: [],
+    author: {
+      _type: 'reference',
+      _ref: uid,
+    },
+  };
+
+  const collection = await client.create(collectionData);
+
   return await client
     .patch(uid)
     .setIfMissing({ collections: [] })
-    .append('collections', [
-      {
-        id,
-        createdAt: new Date(),
-        name,
-        isPrivate,
-        posts: [],
-      },
-    ])
+    .append('collections', [{ _type: 'reference', _ref: collection._id }])
     .commit({ autoGenerateArrayKeys: true });
 }

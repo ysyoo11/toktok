@@ -1,15 +1,10 @@
-import { SimplePost } from './post';
+import type { UserPost } from './post';
 
 export type Collection = {
   id: string;
   name: string;
-  posts: SimplePost[];
-};
-
-export type SimpleCollection = {
-  id: string;
-  name: string;
+  posts: UserPost[];
   firstVideoUrl: string;
-  createdAt: string;
   isPrivate: boolean;
+  createdAt: string;
 };
