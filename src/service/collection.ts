@@ -19,13 +19,14 @@ export async function getCollectionsByUsername(
   return await client.fetch(
     groq`*[_type == 'user' && username == '${username}'][0]{
       "collections": collections[${
-        lastCollectionDate === '0' ? true : 'createdAt < $lastCollectionDate'
+        lastCollectionDate === '0' ? true : 'createdAt > $lastCollectionDate'
       }${
         getOnlyPublic ? ' && isPrivate == false' : ''
-      }] | order(createdAt desc) [0...${POLICY.COLLETION_FETCH_LIMIT}] {
+      }] | order(createdAt asc) [0...${POLICY.COLLECTION_FETCH_LIMIT}] {
         id,
         name,
         createdAt,
+        isPrivate,
         "firstVideoUrl": videos[0]->videoUrl
       }
     }`,

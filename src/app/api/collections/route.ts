@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
 
   const { name, isPrivate } = await req.json();
 
-  if (!name || !isPrivate) return new Response('Bad Request', { status: 400 });
+  if (name === undefined || isPrivate === undefined)
+    return new Response('Bad Request', { status: 400 });
 
   return await createCollection(user.id, name, isPrivate)
     .then(() =>

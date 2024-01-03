@@ -11,4 +11,5 @@ export type SimpleCollection = {
   name: string;
   firstVideoUrl: string;
   createdAt: string;
+  isPrivate: boolean;
 };
