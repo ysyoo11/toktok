@@ -72,8 +72,8 @@ const user = {
       validation: (rule: Rule) => rule.unique(),
     },
     {
-      name: 'videos',
-      title: 'Videos',
+      name: 'posts',
+      title: 'Posts',
       type: 'array',
       of: [{type: 'reference', to: [{type: 'video'}]}],
       validation: (rule: Rule) => rule.unique(),
@@ -96,37 +96,7 @@ const user = {
       name: 'collections',
       title: 'Collections',
       type: 'array',
-      of: [
-        {
-          name: 'collection',
-          title: 'Collection',
-          type: 'document',
-          fields: [
-            {
-              name: 'name',
-              title: 'Name',
-              type: 'string',
-              validation: (rule: Rule) =>
-                rule
-                  .max(rules.COLLECTION_MAX_CHAR)
-                  .warning(
-                    `A collection shouldn't exceed ${rules.COLLECTION_MAX_CHAR} characters.`,
-                  ),
-            },
-            {
-              name: 'isPrivate',
-              title: 'Is Private',
-              type: 'boolean',
-            },
-            {
-              name: 'videos',
-              title: 'Videos',
-              type: 'array',
-              of: [{type: 'reference', to: [{type: 'video'}]}],
-            },
-          ],
-        },
-      ],
+      of: [{type: 'reference', to: [{type: 'collection'}]}],
       validation: (rule: Rule) => rule.unique(),
     },
   ],

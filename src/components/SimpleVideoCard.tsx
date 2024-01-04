@@ -37,6 +37,7 @@ export default function SimpleVideoCard({
         onMouseLeave={stop}
       >
         <video
+          playsInline
           ref={videoRef}
           src={videoUrl}
           muted

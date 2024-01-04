@@ -22,6 +22,15 @@ export async function getPostsByUsername(
     .then((res) => res.json());
 }
 
+export async function getPostsByCollectionId(
+  id: string,
+  lastPostDate: string,
+): Promise<UserPost[]> {
+  return await fetch(
+    `/api/collections/${id}/posts?lastPostDate=${lastPostDate}`,
+  ).then((res) => res.json());
+}
+
 export async function createPost(form: VideoPostForm) {
   const formData = new FormData();
   Object.entries(form) //

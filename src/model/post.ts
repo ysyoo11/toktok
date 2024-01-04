@@ -17,6 +17,7 @@ export type RawPost = Omit<SimplePost, 'comments'> & {
 export type Post = {
   id: string;
   createdAt: string;
+  updatedAt: string;
   videoUrl: string;
   caption: string;
   authorUsername: string;
@@ -33,7 +34,13 @@ export type Post = {
 
 export type UserPost = Pick<
   Post,
-  'id' | 'createdAt' | 'videoUrl' | 'caption' | 'visibility' | 'views'
+  | 'id'
+  | 'createdAt'
+  | 'videoUrl'
+  | 'caption'
+  | 'visibility'
+  | 'views'
+  | 'updatedAt'
 >;
 
 export type Comment = {

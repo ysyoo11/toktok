@@ -164,9 +164,11 @@ const video = {
       validation: (rule: Rule) => rule.unique(),
     },
     {
-      name: 'saved',
-      title: 'Saved',
-      type: 'number',
+      name: 'bookmarks',
+      title: 'Bookmarks',
+      type: 'array',
+      of: [{type: 'reference', to: [{type: 'collection'}]}],
+      validation: (rule: Rule) => rule.unique(),
     },
     {
       name: 'tags',

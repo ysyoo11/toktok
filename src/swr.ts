@@ -1,6 +1,8 @@
 export const USER_SWR_KEY = {
   GET_ME: '@get-me',
   GET_USER_BY_USERNAME: '@get-user-by-username',
+  GET_COLLECTION_BY_USERNAME: '@get-collection-by-username',
+  GET_COLLECTION_BY_ID: '@get-collection-by-id',
 };
 
 export const VIDEO_SWR_KEY = {
@@ -9,6 +11,7 @@ export const VIDEO_SWR_KEY = {
   GET_POST_COMMENT_BY_ID: '@get-post-comment-by-id',
   GET_POST_COMMENT_REPLIES: '@get-post-comment-replies',
   GET_POSTS_BY_USERNAME: '@get-posts-by-username',
+  GET_POSTS_BY_COLLECTION_ID: '@get-posts-by-collection-id',
   POST_POST_COMMENT: '@post-post-comment',
   POST_POST_COMMENT_REPLY: '@post-post-comment-reply',
 };

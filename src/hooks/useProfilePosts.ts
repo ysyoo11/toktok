@@ -20,14 +20,14 @@ export default function useProfilePosts(username: string) {
     setIndex((prev) => prev + 1);
   };
 
-  lastPostDateRef.current =
-    posts.length > 0 ? posts[posts.length - 1].createdAt : '0';
-
   const isReachingEnd =
     posts.length === 0 || posts.length < index * POLICY.POST_FETCH_LIMIT;
 
+  lastPostDateRef.current =
+    posts.length > 0 ? posts[posts.length - 1].createdAt : '0';
+
   useEffect(() => {
-    if (data) {
+    if (data && data.length > 0) {
       setPosts((prev) => [...prev, ...data]);
     }
   }, [data]);

@@ -34,7 +34,7 @@ export default function Avatar({
       )}
     >
       <Image
-        src={image}
+        src={image ?? ''}
         alt={`profile pic of ${name}`}
         fill
         className='object-cover object-center'

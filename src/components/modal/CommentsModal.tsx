@@ -23,8 +23,7 @@ export default function CommentsModal({
   post,
   totalComments,
 }: Props) {
-  const { comments, loading, loadMore, isReachingEnd, setReplyTarget } =
-    usePostStore();
+  const { comments, loading } = usePostStore();
 
   return (
     <Transition appear show={isOpen} as={Fragment}>

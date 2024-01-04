@@ -1,27 +1,26 @@
 import { InView } from 'react-intersection-observer';
 
-import useProfilePosts from '@/hooks/useProfilePosts';
-
 import ProfilePostCard from './ProfilePostCard';
 import Loading from './ui/Loading';
 
+import type { UserPost } from '@/model/post';
+
 type Props = {
-  username: string;
+  posts: UserPost[];
+  loading: boolean;
+  isReachingEnd: boolean;
+  loadMore: () => void;
 };
 
-export default function ProfilePostsSection({ username }: Props) {
-  const { posts, isReachingEnd, loadMore, loading } = useProfilePosts(username);
-
-  if (!posts)
-    return (
-      <div className='py-14'>
-        <Loading className='w-12' />
-      </div>
-    );
-
+export default function ProfilePostsGrid({
+  posts,
+  loading,
+  isReachingEnd,
+  loadMore,
+}: Props) {
   return (
-    <>
-      <ul className='mt-2 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'>
+    <section className='mt-6 lg:mt-10'>
+      <ul className='grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'>
         {posts.map((post) => (
           <li key={`user-post-${post.id}`}>
             <ProfilePostCard post={post} />
@@ -40,6 +39,6 @@ export default function ProfilePostsSection({ username }: Props) {
           />
         </div>
       )}
-    </>
+    </section>
   );
 }
