@@ -1,18 +1,18 @@
 'use client';
 
-import { LockClosedIcon } from '@heroicons/react/24/outline';
-import { ChevronLeftIcon, Cog6ToothIcon } from '@heroicons/react/24/solid';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { useState } from 'react';
-import { InView } from 'react-intersection-observer';
+import useSWRImmutable from 'swr/immutable';
 
-import ProfilePostCard from '@/components/ProfilePostCard';
+import CollectionInfo from '@/components/CollectionInfo';
+import ProfilePostsGrid from '@/components/ProfilePostsGrid';
 import SkeletonProfileCards from '@/components/skeleton/SkeletonProfileCards';
 import SkeletonText from '@/components/skeleton/SkeletonText';
-import Button from '@/components/ui/Button';
-import Loading from '@/components/ui/Loading';
-import useCollection from '@/hooks/useCollection';
+import useCollectionPosts from '@/hooks/useCollectionPosts';
+import { useUser } from '@/hooks/useUser';
+import { getCollectionById } from '@/lib/collections';
+import { Collection } from '@/model/collection';
+import { USER_SWR_KEY } from '@/swr';
 
 type Props = {
   params: {
@@ -26,21 +26,22 @@ export default function CollectionDetailPage({
 }: Props) {
   const [manageMode, setManageMode] = useState(false);
 
-  const {
-    posts,
-    name,
-    loading,
-    isReachingEnd,
-    loadMore,
-    isBlocked,
-    isPrivate,
-  } = useCollection(username, id);
+  const { user, isLoading: userLoading } = useUser();
 
-  const deleteVideo = () => {
-    setManageMode(false);
-  };
+  const { data: collection, isLoading } = useSWRImmutable<Collection>(
+    !userLoading && `${USER_SWR_KEY.GET_COLLECTION_BY_ID}-${username}-${id}`,
+    async () => await getCollectionById(id),
+  );
 
-  if (posts.length === 0 && loading)
+  const { posts, loading, loadMore, isReachingEnd } = useCollectionPosts(id);
+
+  const isBlocked =
+    !userLoading &&
+    collection &&
+    collection.isPrivate &&
+    (user?.username !== username || !user);
+
+  if (isLoading || !collection)
     return (
       <>
         <div className='border-b py-4 sm:py-8'>
@@ -60,78 +61,18 @@ export default function CollectionDetailPage({
 
   return (
     <>
-      <div className='border-b py-4 sm:py-8'>
-        <Link
-          href={`/${username}/collections`}
-          className='flex w-max items-center space-x-2 py-2 pr-2 text-gray-500 hover:text-gray-900'
-        >
-          <ChevronLeftIcon className='h-5 w-5 stroke-2 sm:h-6 sm:w-6' />
-          <span className='hidden sm:block lg:text-lg'>
-            See all collections
-          </span>
-        </Link>
-        <div className='flex items-center space-x-2 sm:mt-4'>
-          <h3 className='text-lg font-medium sm:text-xl lg:text-2xl'>{name}</h3>
-          {!isPrivate && (
-            <span>
-              <LockClosedIcon className='h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8' />
-            </span>
-          )}
-        </div>
-        <p className='text-xs text-gray-400 sm:text-sm lg:text-base'>
-          {posts.length} {posts.length === 1 ? 'video' : 'videos'}
-        </p>
-        <div className='mt-2 sm:mt-4 lg:mt-6'>
-          {manageMode ? (
-            <div className='flex'>
-              <Button color='white-theme' onClick={deleteVideo} size='sm'>
-                Delete
-              </Button>
-            </div>
-          ) : (
-            <>
-              <Button
-                onClick={() => setManageMode(true)}
-                color='white'
-                size='sm'
-                className='flex items-center space-x-2 lg:hidden'
-              >
-                <Cog6ToothIcon className='h-4 w-4' />
-                <span>Manage videos</span>
-              </Button>
-              <Button
-                onClick={() => setManageMode(true)}
-                color='white'
-                className='hidden items-center space-x-2 lg:flex'
-              >
-                <Cog6ToothIcon className='h-5 w-5' />
-                <span>Manage videos</span>
-              </Button>
-            </>
-          )}
-        </div>
-      </div>
-      <section className='mt-6 lg:mt-10'>
-        <ul className='grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'>
-          {posts.map((post) => (
-            <li key={`user-post-${post.id}`}>
-              <ProfilePostCard post={post} />
-            </li>
-          ))}
-        </ul>
-        {loading && <Loading className='w-12 py-20' />}
-        {!isReachingEnd && (
-          <div className='py-2'>
-            <InView
-              as='div'
-              rootMargin='24px'
-              onChange={(inView) => {
-                if (inView) loadMore();
-              }}
-            />
-          </div>
-        )}
-      </section>
+      <CollectionInfo
+        username={username}
+        collection={collection}
+        manageMode={manageMode}
+        setManageMode={setManageMode}
+      />
+      <ProfilePostsGrid
+        posts={posts}
+        isReachingEnd={isReachingEnd}
+        loading={loading}
+        loadMore={loadMore}
+      />
     </>
   );
 }
