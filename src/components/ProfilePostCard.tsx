@@ -35,7 +35,7 @@ export default function ProfilePostCard({
           playsInline
           ref={videoRef}
           src={videoUrl}
-          className='object-fill object-center'
+          className='h-full w-full object-cover object-center'
           muted
         />
         <div className='absolute bottom-2 left-2 flex items-center space-x-1 text-white/90'>
