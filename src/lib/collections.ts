@@ -4,7 +4,16 @@ export async function getCollectionsByUsername(
   onlyPublic: boolean,
 ) {
   return await fetch(
-    `/api/user/${username}/collections?lastCollectionDate=${lastCollectionDate}&onlyPublic=${onlyPublic}`,
+    `/api/collections?username=${username}&lastCollectionDate=${lastCollectionDate}&onlyPublic=${onlyPublic}`,
+  ).then((res) => res.json());
+}
+
+export async function getCollectionById(
+  collectionId: string,
+  lastPostDate: string,
+) {
+  return await fetch(
+    `/api/collections/${collectionId}?lastPostDate=${lastPostDate}`,
   ).then((res) => res.json());
 }
 

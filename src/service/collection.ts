@@ -17,10 +17,10 @@ export async function getCollectionsByUsername(
 ) {
   return await client.fetch(
     groq`*[_type == 'collection' && author._ref in *[_type=='user' && username=='${username}']._id][${
-      lastCollectionDate === '0' ? true : '_createdAt > $lastCollectionDate'
+      lastCollectionDate === '0' ? true : '_createdAt < $lastCollectionDate'
     }${
       getOnlyPublic ? ' && isPrivate == false' : ''
-    }] | order(_createdAt asc) [0...${POLICY.COLLECTION_FETCH_LIMIT}] {
+    }] | order(_createdAt desc) [0...${POLICY.COLLECTION_FETCH_LIMIT}] {
       "id": _id,
       "createdAt": _createdAt,
       name,
@@ -31,24 +31,20 @@ export async function getCollectionsByUsername(
   );
 }
 
-export async function getCollectionById(
-  username: string,
-  id: string,
-  lastPostKey: string,
-) {
+export async function getCollectionById(id: string, lastPostDate: string) {
   return await client.fetch(
     groq`*[_type == 'collection' && _id == '${id}'][0] {
-      "collection": collections[id == '${id}'][0]{
-        id,
-        name,
-        isPrivate,
-        posts[_key > $lastPostKey] | order(_key asc) [0...1]->{
-          ${userPostProjection}
-        },
+      "id": _id,
+      name,
+      isPrivate,
+      "posts": posts[${
+        lastPostDate === '0' ? true : '_createdAt > $lastPostDate'
+      }] | order(_createdAt asc) [0...${POLICY.POST_FETCH_LIMIT}]->{
+        ${userPostProjection}
       }
     }`,
     {
-      lastPostKey,
+      lastPostDate,
     },
   );
 }
