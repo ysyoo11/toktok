@@ -8,13 +8,10 @@ export async function getCollectionsByUsername(
   ).then((res) => res.json());
 }
 
-export async function getCollectionById(
-  collectionId: string,
-  lastPostDate: string,
-) {
-  return await fetch(
-    `/api/collections/${collectionId}?lastPostDate=${lastPostDate}`,
-  ).then((res) => res.json());
+export async function getCollectionById(collectionId: string) {
+  return await fetch(`/api/collections/${collectionId}`).then((res) =>
+    res.json(),
+  );
 }
 
 export async function createCollection(name: string, isPrivate: boolean) {
