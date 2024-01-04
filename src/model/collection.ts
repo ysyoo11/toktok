@@ -1,9 +1,7 @@
-import type { UserPost } from './post';
-
 export type Collection = {
   id: string;
   name: string;
-  posts: UserPost[];
+  posts: number;
   firstVideoUrl: string;
   isPrivate: boolean;
   createdAt: string;

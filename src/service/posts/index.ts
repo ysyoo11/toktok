@@ -6,7 +6,6 @@ import { client } from '@/service/sanity';
 import type { RawPost, UserPost } from '@/model/post';
 
 const simplePostProjection = `
-  ...,
   "id": _id,
   "createdAt": _createdAt,
   videoUrl,
@@ -23,6 +22,16 @@ const simplePostProjection = `
       _key,
     },
   },
+`;
+
+const userPostProjection = `
+  "id": _id,
+  "createdAt": _createdAt,
+  "updatedAt": _updatedAt,
+  videoUrl,
+  caption,
+  visibility,
+  views,
 `;
 
 export async function getPublicPosts() {
@@ -53,14 +62,25 @@ export async function getPostsByUsername(
     groq`*[_type == 'video' && author._ref in *[_type=='user' && username == '${username}']._id][${
       lastPostDate === '0' ? true : '_createdAt < $lastPostDate'
     }] | order(_createdAt desc) [0...${POLICY.POST_FETCH_LIMIT}] {
-      "id": _id,
-      "createdAt": _createdAt,
-      videoUrl,
-      caption,
-      visibility,
-      views
+      ${userPostProjection}
   }`,
     { lastPostDate },
+  );
+}
+
+export async function getPostsByCollectionId(
+  id: string,
+  lastPostDate: string,
+): Promise<UserPost[]> {
+  return await client.fetch(
+    groq`*[_type == 'video' && references('${id}')][${
+      lastPostDate === '0' ? true : '_updatedAt < $lastPostDate'
+    }] | order(_updatedAt desc) [0...${POLICY.POST_FETCH_LIMIT}] {
+        ${userPostProjection}
+      }`,
+    {
+      lastPostDate,
+    },
   );
 }
 
@@ -69,11 +89,10 @@ export async function createPost(
   authorId: string,
   caption: string,
 ) {
-  const { url: videoUrl, _id } = await client.assets.upload('file', file);
+  const { url: videoUrl } = await client.assets.upload('file', file);
 
   const postData = {
     _type: 'video',
-    id: _id,
     videoUrl,
     author: {
       _type: 'reference',
@@ -93,7 +112,7 @@ export async function createPost(
   return await client
     .patch(authorId)
     .setIfMissing({ posts: [] })
-    .insert('after', 'posts[-1]', [{ _type: 'reference', _ref: post._id }])
+    .append('posts', [{ _type: 'reference', _ref: post._id }])
     .commit({ autoGenerateArrayKeys: true });
 }
 

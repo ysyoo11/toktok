@@ -1,13 +1,7 @@
-// TODO:
-// 1. createCollection ✅
-// 2. getCollectionsByUsername ✅ (public only / all)
-// 3. getCollectionById
-
 import { groq } from 'next-sanity';
 
 import { POLICY } from '@/policy';
 
-import { userPostProjection } from './posts';
 import { client } from './sanity';
 
 export async function getCollectionsByUsername(
@@ -31,21 +25,14 @@ export async function getCollectionsByUsername(
   );
 }
 
-export async function getCollectionById(id: string, lastPostDate: string) {
+export async function getCollectionById(id: string) {
   return await client.fetch(
     groq`*[_type == 'collection' && _id == '${id}'][0] {
       "id": _id,
       name,
       isPrivate,
-      "posts": posts[${
-        lastPostDate === '0' ? true : '_createdAt > $lastPostDate'
-      }] | order(_createdAt asc) [0...${POLICY.POST_FETCH_LIMIT}]->{
-        ${userPostProjection}
-      }
+      "posts": count(posts),
     }`,
-    {
-      lastPostDate,
-    },
   );
 }
 
