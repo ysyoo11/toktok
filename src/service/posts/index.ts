@@ -68,6 +68,22 @@ export async function getPostsByUsername(
   );
 }
 
+export async function getLikedPostsByUsername(
+  username: string,
+  lastItemDate: string,
+): Promise<UserPost[]> {
+  return await client.fetch(
+    groq`*[_type == 'video' && *[_type == 'user' && username == '${username}'][0]._id in likes[]._ref][${
+      lastItemDate === '0' ? true : '_updatedAt < $lastItemDate'
+    }] | order(_updatedAt desc) [0...${POLICY.POST_FETCH_LIMIT}] {
+      ${userPostProjection}
+    }`,
+    {
+      lastItemDate,
+    },
+  );
+}
+
 export async function getPostsByCollectionId(
   id: string,
   lastPostDate: string,
