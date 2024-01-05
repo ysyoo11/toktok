@@ -1,18 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
 import useSWRImmutable from 'swr/immutable';
 
-import type { Key, SWRConfiguration } from 'swr';
+import type { SWRConfiguration } from 'swr';
 
-type Props<Data = any, SWRKey extends Key = Key> = {
+type Props = {
   fetchInput: RequestInfo;
   fetchLimit: number;
+  sortOrder: 'createdAt' | 'updatedAt';
   swrOptions?: SWRConfiguration;
   initialCondition?: boolean;
 };
 
 export default function useInfiniteScroll<
   T extends { updatedAt: string; createdAt: string },
->({ fetchInput, fetchLimit, swrOptions, initialCondition = true }: Props) {
+>({
+  fetchInput,
+  fetchLimit,
+  sortOrder,
+  swrOptions,
+  initialCondition = true,
+}: Props) {
   const [index, setIndex] = useState(1);
   const [items, setItems] = useState<T[]>([]);
 
@@ -32,11 +39,15 @@ export default function useInfiniteScroll<
 
   useEffect(() => {
     if (items.length > 0) {
-      lastItemDateRef.current = items[items.length - 1].createdAt;
+      if (sortOrder === 'createdAt') {
+        lastItemDateRef.current = items[items.length - 1].createdAt;
+      } else {
+        lastItemDateRef.current = items[items.length - 1].updatedAt;
+      }
     } else {
       lastItemDateRef.current = '0';
     }
-  }, [items]);
+  }, [items, sortOrder]);
 
   useEffect(() => {
     if (!data) return;
