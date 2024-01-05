@@ -1,14 +1,18 @@
+import { Collection } from '@/model/collection';
+
 export async function getCollectionsByUsername(
   username: string,
   lastCollectionDate: string,
   onlyPublic: boolean,
-) {
+): Promise<Collection[]> {
   return await fetch(
     `/api/collections?username=${username}&lastCollectionDate=${lastCollectionDate}&onlyPublic=${onlyPublic}`,
   ).then((res) => res.json());
 }
 
-export async function getCollectionById(collectionId: string) {
+export async function getCollectionById(
+  collectionId: string,
+): Promise<Collection> {
   return await fetch(`/api/collections/${collectionId}`).then((res) =>
     res.json(),
   );
