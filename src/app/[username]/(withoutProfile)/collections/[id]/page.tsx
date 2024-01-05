@@ -8,10 +8,12 @@ import CollectionInfo from '@/components/CollectionInfo';
 import ProfilePostsGrid from '@/components/ProfilePostsGrid';
 import SkeletonProfileCards from '@/components/skeleton/SkeletonProfileCards';
 import SkeletonText from '@/components/skeleton/SkeletonText';
-import useCollectionPosts from '@/hooks/useCollectionPosts';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { useUser } from '@/hooks/useUser';
 import { getCollectionById } from '@/lib/collections';
 import { Collection } from '@/model/collection';
+import { UserPost } from '@/model/post';
+import { POLICY } from '@/policy';
 import { USER_SWR_KEY } from '@/swr';
 
 type Props = {
@@ -33,7 +35,16 @@ export default function CollectionDetailPage({
     async () => await getCollectionById(id),
   );
 
-  const { posts, loading, loadMore, isReachingEnd } = useCollectionPosts(id);
+  const {
+    items: posts,
+    loading,
+    loadMore,
+    isReachingEnd,
+  } = useInfiniteScroll<UserPost>({
+    fetchInput: `/api/collections/${id}/posts`,
+    fetchLimit: POLICY.POST_FETCH_LIMIT,
+    sortOrder: 'updatedAt',
+  });
 
   const isBlocked =
     !userLoading &&
