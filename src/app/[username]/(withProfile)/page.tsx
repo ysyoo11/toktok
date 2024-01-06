@@ -2,7 +2,9 @@
 
 import ProfilePostsGrid from '@/components/ProfilePostsGrid';
 import SkeletonProfileCards from '@/components/skeleton/SkeletonProfileCards';
-import useProfilePosts from '@/hooks/useProfilePosts';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import { UserPost } from '@/model/post';
+import { POLICY } from '@/policy';
 
 type Props = {
   params: {
@@ -11,7 +13,16 @@ type Props = {
 };
 
 export default function ProfilePage({ params: { username } }: Props) {
-  const { posts, isReachingEnd, loadMore, loading } = useProfilePosts(username);
+  const {
+    items: posts,
+    loading,
+    loadMore,
+    isReachingEnd,
+  } = useInfiniteScroll<UserPost>({
+    fetchInput: `/api/user/${username}/posts`,
+    fetchLimit: POLICY.POST_FETCH_LIMIT,
+    sortOrder: 'createdAt',
+  });
 
   if (posts.length === 0 && loading) return <SkeletonProfileCards />;
 

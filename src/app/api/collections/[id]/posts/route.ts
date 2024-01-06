@@ -6,13 +6,13 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const lastPostDate = req.nextUrl.searchParams.get('lastPostDate');
+  const lastItemDate = req.nextUrl.searchParams.get('lastItemDate');
   const { id } = params;
 
-  if (lastPostDate === null || id === undefined)
+  if (lastItemDate === null || id === undefined)
     return new Response('Bad Request', { status: 400 });
 
-  return await getPostsByCollectionId(id, lastPostDate)
+  return await getPostsByCollectionId(id, lastItemDate)
     .then((res) => NextResponse.json(res, { status: 200 }))
     .catch((err) => {
       console.error(err);
