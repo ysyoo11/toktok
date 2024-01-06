@@ -6,13 +6,13 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { username: string } },
 ) {
-  const lastItemDate = req.nextUrl.searchParams.get('lastItemDate');
+  const lastItemSortIndex = req.nextUrl.searchParams.get('lastItemSortIndex');
   const { username } = params;
 
-  if (!username || !lastItemDate)
+  if (!username || !lastItemSortIndex)
     return new Response('Bad Request', { status: 400 });
 
-  return await getPostsByUsername(username, lastItemDate)
+  return await getPostsByUsername(username, lastItemSortIndex)
     .then((res) => NextResponse.json(res, { status: 200 }))
     .catch((err) => {
       console.error(err);
