@@ -1,3 +1,4 @@
+import { ItemWithTimestamp } from './base';
 import { Collection } from './collection';
 import { SimplePost } from './post';
 
@@ -9,11 +10,15 @@ export type AuthUser = {
   image?: string;
 };
 
-export type SimpleUser = Pick<User, 'id' | 'username' | 'name' | 'imageUrl'>;
+export type SimpleUser = Pick<
+  User,
+  'id' | 'username' | 'name' | 'imageUrl' | 'createdAt' | 'updatedAt'
+> & {
+  following: string[];
+  followers: string[];
+};
 
-export type User = {
-  id: string;
-  createdAt: string;
+export type User = ItemWithTimestamp & {
   name: string;
   username: string;
   imageUrl: string;
@@ -28,5 +33,8 @@ export type User = {
 
 export type ProfileUser = Omit<
   User,
-  'videos' | 'liked' | 'saved' | 'collections'
->;
+  'videos' | 'liked' | 'saved' | 'collections' | 'following' | 'followers'
+> & {
+  following: number;
+  followers: number;
+};

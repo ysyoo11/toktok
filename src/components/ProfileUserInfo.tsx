@@ -1,8 +1,10 @@
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
 
 import { ProfileUser } from '@/model/user';
 
 import Avatar from './Avatar';
+import FollowingFollowersModal from './modal/FollowingFollowersModal';
 import SkeletonAvatar from './skeleton/SkeletonAvatar';
 import SkeletonText from './skeleton/SkeletonText';
 import Button from './ui/Button';
@@ -13,11 +15,36 @@ type Props = {
   isFollowing: boolean;
 };
 
+export const followingFollowersModalDisplayModes = [
+  'followers',
+  'following',
+] as const;
+export type FollowingFollowersModalDisplayMode =
+  (typeof followingFollowersModalDisplayModes)[number];
+
+export type ModalState = {
+  type: FollowingFollowersModalDisplayMode;
+  isOpen: boolean;
+};
+
+const initialModalState: ModalState = {
+  type: 'followers',
+  isOpen: false,
+};
+
 export default function ProfileUserInfo({
   user,
   isMyPage,
   isFollowing,
 }: Props) {
+  const [modalState, setModalState] = useState<ModalState>(initialModalState);
+
+  const showFollowingFollowersModal = (
+    type: FollowingFollowersModalDisplayMode,
+  ) => {
+    setModalState({ type, isOpen: true });
+  };
+
   if (!user)
     return (
       <>
@@ -41,7 +68,7 @@ export default function ProfileUserInfo({
       </>
     );
 
-  const { imageUrl, username, name, bio } = user;
+  const { imageUrl, username, name, bio, followers, following } = user;
 
   return (
     <>
@@ -95,20 +122,31 @@ export default function ProfileUserInfo({
         </div>
       </div>
       <div className='mt-4 flex space-x-4'>
-        <div className='flex items-center text-sm sm:text-base'>
-          <span className='mr-2 font-semibold'>
-            {user.following ? user.following.length : 0}
-          </span>
+        <button
+          onClick={() => showFollowingFollowersModal('following')}
+          className='flex items-center text-sm sm:text-base'
+        >
+          <span className='mr-2 font-semibold'>{following ?? 0}</span>
           <span className='text-gray-500'>Following</span>
-        </div>
-        <div className='flex items-center text-sm sm:text-base'>
-          <span className='mr-2 font-semibold'>
-            {user.followers ? user.followers.length : 0}
-          </span>
+        </button>
+        <button
+          onClick={() => showFollowingFollowersModal('followers')}
+          className='flex items-center text-sm sm:text-base'
+        >
+          <span className='mr-2 font-semibold'>{followers ?? 0}</span>
           <span className='text-gray-500'>Followers</span>
-        </div>
+        </button>
       </div>
       <p className='mt-4 text-sm sm:text-base'>{bio}</p>
+      <FollowingFollowersModal
+        username={username}
+        setModalState={setModalState}
+        followers={followers ?? 0}
+        following={following ?? 0}
+        isOpen={modalState.isOpen}
+        type={modalState.type}
+        onClose={() => setModalState((prev) => ({ ...prev, isOpen: false }))}
+      />
     </>
   );
 }

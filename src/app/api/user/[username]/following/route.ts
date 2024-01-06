@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getPostsByUsername } from '@/service/posts';
+import { getFollowingByUsername } from '@/service/user';
 
 export async function GET(
   req: NextRequest,
@@ -9,11 +9,11 @@ export async function GET(
   const lastItemSortIndex = req.nextUrl.searchParams.get('lastItemSortIndex');
   const { username } = params;
 
-  if (!username || !lastItemSortIndex)
+  if (username === undefined || lastItemSortIndex === null)
     return new Response('Bad Request', { status: 400 });
 
-  return await getPostsByUsername(username, lastItemSortIndex)
-    .then((res) => NextResponse.json(res, { status: 200 }))
+  return await getFollowingByUsername(username, lastItemSortIndex)
+    .then(({ following }) => NextResponse.json(following, { status: 200 }))
     .catch((err) => {
       console.error(err);
       return new Response('Server Error', { status: 500 });
