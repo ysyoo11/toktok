@@ -2,9 +2,22 @@ import { User as NextAuthUser } from 'next-auth';
 import { AdapterUser } from 'next-auth/adapters';
 import { groq } from 'next-sanity';
 
+import { POLICY } from '@/policy';
+
 import { client } from './sanity';
 
 import type { ProfileUser, User } from '@/model/user';
+
+const simpleUserProjection = `
+  "id": _id,
+  username,
+  name,
+  imageUrl,
+  "createdAt": _createdAt,
+  "updatedAt": _updatedAt,
+  "following": following[]->username,
+  "followers": followers[]->username
+`;
 
 export async function getUsers(): Promise<User[]> {
   return await client.fetch(
@@ -49,10 +62,49 @@ export async function getUserByUsername(
     name,
     imageUrl,
     bio,
-    following[]->{username,imageUrl},
-    followers[]->{username,imageUrl},
+    "following": count(following),
+    "followers": count(followers)
   }`,
   );
+}
+
+export async function getFollowersByUsername(
+  username: string,
+  lastId: string,
+): Promise<Pick<User, 'followers'>> {
+  return await client
+    .fetch(
+      groq`*[_type == 'user' && username == '${username}'][0]{
+      followers[${
+        lastId === '0' ? true : '_ref > $lastId'
+      }] | order(_id asc) [0...${POLICY.USER_FETCH_LIMIT}]->{
+        ${simpleUserProjection}
+      }
+    }`,
+      {
+        lastId,
+      },
+    )
+    .then((res) => (!res.followers ? { followers: [] } : res));
+}
+export async function getFollowingByUsername(
+  username: string,
+  lastId: string,
+): Promise<Pick<User, 'following'>> {
+  return await client
+    .fetch(
+      groq`*[_type == 'user' && username == '${username}'][0]{
+      following[${
+        lastId === '0' ? true : '_ref > $lastId'
+      }] | order(_id asc) [0...${POLICY.USER_FETCH_LIMIT}]->{
+        ${simpleUserProjection}
+      }
+    }`,
+      {
+        lastId,
+      },
+    )
+    .then((res) => (!res.following ? { following: [] } : res));
 }
 
 // async function uploadImage(file: File, username: string) {
