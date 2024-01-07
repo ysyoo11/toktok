@@ -2,6 +2,7 @@ import { useRouter } from 'next/navigation';
 import { InView } from 'react-intersection-observer';
 
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import { useUser } from '@/hooks/useUser';
 import { POLICY } from '@/policy';
 
 import Avatar from './Avatar';
@@ -32,7 +33,7 @@ export default function FollowingFollowersList({
     fetchLimit: POLICY.USER_FETCH_LIMIT,
     sortOrder: 'id',
   });
-
+  const { user } = useUser();
   const router = useRouter();
 
   return (
@@ -63,11 +64,7 @@ export default function FollowingFollowersList({
                 <span className='text-xs text-gray-600 sm:text-sm'>{name}</span>
               </div>
             </button>
-            <FollowButton
-              isFollowed={following.includes(originUsername)}
-              isFollowing={followers.includes(originUsername)}
-              targetUsername={username}
-            />
+            <FollowButton user={user} targetUsername={username} />
           </li>
         ))}
       </ul>

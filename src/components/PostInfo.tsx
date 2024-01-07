@@ -1,9 +1,10 @@
 import { format } from 'timeago.js';
 
+import { useUser } from '@/hooks/useUser';
 import { SimplePost } from '@/model/post';
 
 import Avatar from './Avatar';
-import Button from './ui/Button';
+import FollowButton from './FollowButton';
 
 type Props = {
   post: SimplePost;
@@ -11,9 +12,7 @@ type Props = {
 
 export default function PostInfo({ post }: Props) {
   const { authorImage, authorUsername, authorName, caption, createdAt } = post;
-
-  // TODO:
-  const handleFollow = () => {};
+  const { user } = useUser();
 
   return (
     <div className='rounded-lg bg-gray-50 p-4'>
@@ -29,7 +28,7 @@ export default function PostInfo({ post }: Props) {
               </span>
             </div>
           </div>
-          <Button onClick={handleFollow}>Follow</Button>
+          <FollowButton user={user} targetUsername={authorUsername} />
         </div>
       </div>
       <p className='mt-4 leading-snug text-gray-600'>{caption}</p>
