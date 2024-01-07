@@ -9,8 +9,8 @@ import { MouseEvent, useState } from 'react';
 import usePosts from '@/hooks/usePosts';
 import { useUser } from '@/hooks/useUser';
 
+import AvatarFollowButton from './AvatarFollowButton';
 import CommentsModal from './modal/CommentsModal';
-import PostDetailMobileFollowButton from './PostDetailMobileFollowButton';
 import ToggleButton from './ui/ToggleButton';
 
 import type { SimplePost } from '@/model/post';
@@ -29,7 +29,6 @@ export default function PostDetailMobileEngagementBar({ post }: Props) {
   const { user } = useUser();
   const { setLike } = usePosts();
   const liked = user ? likes.includes(user.username) : false;
-  const isFollowed = false; // TODO:
 
   const handleLike = async (isLiked: boolean) => {
     if (!user) return router.push('/signin', { scroll: false });
@@ -44,17 +43,14 @@ export default function PostDetailMobileEngagementBar({ post }: Props) {
 
   const handleSave = () => {};
 
-  const handleFollow = () => {};
-
   return (
     <div className='basis-1/5 pb-2'>
       <ul className='flex flex-col items-center space-y-3'>
         <li>
-          <PostDetailMobileFollowButton
-            onClick={handleFollow}
-            image={authorImage}
-            username={authorUsername}
-            isFollowed={isFollowed}
+          <AvatarFollowButton
+            user={user}
+            targetUserImage={authorImage}
+            targetUsername={authorUsername}
           />
         </li>
         <li className='flex flex-col items-center'>
