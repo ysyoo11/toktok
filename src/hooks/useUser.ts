@@ -2,10 +2,10 @@ import useSWRImmutable from 'swr/immutable';
 
 import { USER_SWR_KEY } from '@/swr';
 
-import type { User } from '@/model/user';
+import type { SimpleUser } from '@/model/user';
 
 export function useUser() {
-  const { data: user, isLoading } = useSWRImmutable<User | null>(
+  const { data: user, isLoading } = useSWRImmutable<SimpleUser>(
     USER_SWR_KEY.GET_ME,
     () => fetch('/api/me').then((res) => res.json()),
     {
