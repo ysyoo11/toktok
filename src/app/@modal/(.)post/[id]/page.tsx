@@ -1,7 +1,6 @@
 'use client';
 import { Dialog } from '@headlessui/react';
 import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
 
 import DetailVideoPlayer from '@/components/DetailVideoPlayer';
 import PostDetailSidebar from '@/components/PostDetailSidebar';
@@ -19,9 +18,7 @@ export default function PostDetailModal({ params: { id } }: Props) {
   const { post } = usePost(id);
   const router = useRouter();
 
-  const onClose = useCallback(() => {
-    router.back();
-  }, [router]);
+  const onClose = () => router.back();
 
   if (!post)
     return (
