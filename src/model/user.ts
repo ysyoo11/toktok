@@ -19,22 +19,17 @@ export type User = ItemWithTimestamp & {
   followers: string[];
   posts: SimplePost[];
   liked: SimplePost[];
-  saved: SimplePost[]; //
-  collections: Collection[]; //
+  saved: SimplePost[];
+  collections: Collection[];
 };
 
-export type SimpleUser = Pick<
+export type SimpleUser = Omit<
   User,
-  'id' | 'username' | 'name' | 'imageUrl' | 'createdAt' | 'updatedAt'
-> & {
-  following: string[];
-  followers: string[];
-};
+  'posts' | 'liked' | 'saved' | 'collections' | 'bio'
+>;
 
-export type ProfileUser = Omit<
-  User,
-  'posts' | 'liked' | 'saved' | 'collections' | 'following' | 'followers'
-> & {
+export type ProfileUser = Omit<SimpleUser, 'following' | 'followers'> & {
   following: number;
   followers: number;
+  bio: string;
 };
