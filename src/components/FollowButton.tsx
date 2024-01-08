@@ -1,4 +1,9 @@
+import { useCallback } from 'react';
+import { useSWRConfig } from 'swr';
+
+import { updateFollow } from '@/lib/follow';
 import { SimpleUser } from '@/model/user';
+import { USER_SWR_KEY } from '@/swr';
 
 import Button from './ui/Button';
 
@@ -15,11 +20,36 @@ export default function FollowButton({
   targetUsername,
   className,
 }: Props) {
-  const isFollowing = user ? user.following.includes(targetUsername) : false;
-  const isFollowed = user ? user.followers.includes(targetUsername) : false;
+  const { mutate } = useSWRConfig();
 
-  const handleFollow = () => {};
-  const handleUnfollow = () => {};
+  const isFollowing = user ? user.following?.includes(targetUsername) : false;
+  const isFollowed = user ? user.followers?.includes(targetUsername) : false;
+
+  const handleFollowUpdate = useCallback(
+    (type: 'follow' | 'unfollow') => {
+      if (!user) return;
+      const newUser: SimpleUser =
+        type === 'follow'
+          ? { ...user, following: [...user.following, targetUsername] }
+          : {
+              ...user,
+              following: user.following.filter((f) => f !== targetUsername),
+            };
+      mutate(
+        (key) => typeof key === 'string' && key === USER_SWR_KEY.GET_ME,
+        updateFollow(targetUsername, type),
+        {
+          optimisticData: newUser,
+          revalidate: false,
+          populateCache: false,
+          rollbackOnError: true,
+        },
+      ).then(() =>
+        mutate((key) => typeof key === 'string' && key.startsWith('/api/user')),
+      );
+    },
+    [mutate, targetUsername, user],
+  );
 
   if (user && user.username === targetUsername) return null;
 
@@ -28,7 +58,7 @@ export default function FollowButton({
       <Button
         size='sm'
         color='white'
-        onClick={handleUnfollow}
+        onClick={() => handleFollowUpdate('unfollow')}
         className={className}
       >
         Following
@@ -41,13 +71,17 @@ export default function FollowButton({
           <Button
             size='sm'
             color='white-theme'
-            onClick={handleFollow}
+            onClick={() => handleFollowUpdate('follow')}
             className={className}
           >
             {isFollowed ? 'Follow back' : 'Follow'}
           </Button>
         ) : (
-          <Button size='sm' onClick={handleFollow} className={className}>
+          <Button
+            size='sm'
+            onClick={() => handleFollowUpdate('follow')}
+            className={className}
+          >
             {isFollowed ? 'Follow back' : 'Follow'}
           </Button>
         )}

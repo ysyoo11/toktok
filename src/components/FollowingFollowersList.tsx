@@ -39,7 +39,7 @@ export default function FollowingFollowersList({
   return (
     <section className={className}>
       <ul className='mt-4 space-y-4 overflow-y-auto px-6 sm:px-8'>
-        {users.map(({ id, imageUrl, username, name, followers, following }) => (
+        {users.map(({ id, imageUrl, username, name }) => (
           <li key={id} className='flex items-center justify-between'>
             <button
               onClick={() => router.push(`/${username}`)}
