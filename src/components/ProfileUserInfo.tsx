@@ -1,18 +1,20 @@
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { ProfileUser } from '@/model/user';
+import { ProfileUser, SimpleUser } from '@/model/user';
 
 import Avatar from './Avatar';
+import FollowButton from './FollowButton';
 import FollowingFollowersModal from './modal/FollowingFollowersModal';
 import SkeletonAvatar from './skeleton/SkeletonAvatar';
 import SkeletonText from './skeleton/SkeletonText';
 import Button from './ui/Button';
 
 type Props = {
+  me: SimpleUser | undefined;
   user: ProfileUser | undefined;
   isMyPage: boolean;
-  isFollowing: boolean;
 };
 
 export const followingFollowersModalDisplayModes = [
@@ -32,16 +34,14 @@ const initialModalState: ModalState = {
   isOpen: false,
 };
 
-export default function ProfileUserInfo({
-  user,
-  isMyPage,
-  isFollowing,
-}: Props) {
+export default function ProfileUserInfo({ me, user, isMyPage }: Props) {
   const [modalState, setModalState] = useState<ModalState>(initialModalState);
+  const router = useRouter();
 
   const showFollowingFollowersModal = (
     type: FollowingFollowersModalDisplayMode,
   ) => {
+    if (!me) router.push('/signin', { scroll: false });
     setModalState({ type, isOpen: true });
   };
 
@@ -114,11 +114,7 @@ export default function ProfileUserInfo({
               </Button>
             </>
           )}
-          {!isMyPage && !isFollowing && (
-            <Button className='mt-2 block' size='xs'>
-              Follow
-            </Button>
-          )}
+          <FollowButton targetUsername={username} user={me} />
         </div>
       </div>
       <div className='mt-4 flex space-x-4'>

@@ -16,3 +16,5 @@ export async function GET() {
   return await getUserById(user.id) //
     .then((data) => NextResponse.json(data));
 }
+
+export const dynamic = 'force-dynamic';

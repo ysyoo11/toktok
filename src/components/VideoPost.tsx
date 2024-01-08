@@ -1,22 +1,24 @@
 'use client';
 
 import clsx from 'clsx';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
-import { useUser } from '@/hooks/useUser';
 import { SimplePost } from '@/model/post';
+import { SimpleUser } from '@/model/user';
 
 import Avatar from './Avatar';
+import FollowButton from './FollowButton';
 import PostEngagementBar from './PostEngagementBar';
-import Button from './ui/Button';
 import VideoPlayer from './VideoPlayer';
 
 type Props = {
   post: SimplePost;
+  user: SimpleUser | undefined;
   className?: string;
 };
 
-export default function VideoPost({ post, className }: Props) {
+export default function VideoPost({ post, user, className }: Props) {
   const {
     authorName,
     authorUsername,
@@ -26,8 +28,6 @@ export default function VideoPost({ post, className }: Props) {
     videoUrl,
     id,
   } = post;
-
-  const { user } = useUser();
 
   const [isCaptionClamped, setIsCaptionClamped] = useState(false);
   const [showFullCaption, setShowFullCaption] = useState(false);
@@ -52,33 +52,34 @@ export default function VideoPost({ post, className }: Props) {
         className,
       )}
     >
-      <Avatar
-        image={authorImage}
-        name={authorUsername}
-        className='hidden xs:block'
-      />
+      <Link href={`/${authorUsername}`} className='hidden xs:block'>
+        <Avatar image={authorImage} name={authorUsername} />
+      </Link>
       <div className='flex w-full xs:pl-3'>
         <div className='w-full max-w-sm'>
           <div className='flex items-center justify-between'>
-            <div className='flex items-center'>
-              <Avatar
-                image={authorImage}
-                name={authorName}
-                className='xs:hidden'
-                size='sm'
-              />
-              <div className='flex flex-col pl-2 xs:pl-0'>
-                <span className='font-semibold'>{authorUsername}</span>
-                <span className='text-xs text-gray-600 xs:text-sm'>
-                  {authorName}
-                </span>
+            <Link href={`/${authorUsername}`}>
+              <div className='flex items-center'>
+                <Avatar
+                  image={authorImage}
+                  name={authorName}
+                  className='xs:hidden'
+                  size='sm'
+                />
+                <div className='flex flex-col pl-2 xs:pl-0'>
+                  <span className='font-semibold'>{authorUsername}</span>
+                  <span className='text-xs text-gray-600 xs:text-sm'>
+                    {authorName}
+                  </span>
+                </div>
               </div>
-            </div>
-            {user?.username !== authorUsername && (
-              <Button color='white-theme' size='xs' className='xs:hidden'>
-                Follow
-              </Button>
-            )}
+            </Link>
+            <FollowButton
+              user={user}
+              location='feed'
+              targetUsername={authorUsername}
+              className='xs:hidden'
+            />
           </div>
           <div className='mt-2 xs:mt-1'>
             <div className='flex items-end pr-10 text-sm xs:pr-0 xs:text-base'>
@@ -105,11 +106,12 @@ export default function VideoPost({ post, className }: Props) {
           </div>
         </div>
         <div className='pr-4'>
-          {user?.username !== authorUsername && (
-            <Button color='white-theme' size='sm' className='hidden xs:block'>
-              Follow
-            </Button>
-          )}
+          <FollowButton
+            user={user}
+            location='feed'
+            targetUsername={authorUsername}
+            className='hidden xs:block'
+          />
         </div>
       </div>
     </div>

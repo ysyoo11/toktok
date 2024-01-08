@@ -10,31 +10,26 @@ export type AuthUser = {
   image?: string;
 };
 
-export type SimpleUser = Pick<
-  User,
-  'id' | 'username' | 'name' | 'imageUrl' | 'createdAt' | 'updatedAt'
-> & {
-  following: string[];
-  followers: string[];
-};
-
 export type User = ItemWithTimestamp & {
   name: string;
   username: string;
   imageUrl: string;
   bio: string;
-  following: SimpleUser[];
-  followers: SimpleUser[];
-  videos: SimplePost[];
+  following: string[];
+  followers: string[];
+  posts: SimplePost[];
   liked: SimplePost[];
   saved: SimplePost[];
   collections: Collection[];
 };
 
-export type ProfileUser = Omit<
+export type SimpleUser = Omit<
   User,
-  'videos' | 'liked' | 'saved' | 'collections' | 'following' | 'followers'
-> & {
+  'posts' | 'liked' | 'saved' | 'collections' | 'bio'
+>;
+
+export type ProfileUser = Omit<SimpleUser, 'following' | 'followers'> & {
   following: number;
   followers: number;
+  bio: string;
 };

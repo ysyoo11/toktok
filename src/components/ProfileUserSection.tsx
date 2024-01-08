@@ -30,21 +30,10 @@ export default function ProfileUserSection({ username }: Props) {
   if (error) notFound();
 
   const isMyPage = user && me ? user.id === me.id : false;
-  const isFollowing = me
-    ? Boolean(
-        me.following
-          ? me.following.find((user) => user.username === username)
-          : false,
-      )
-    : false;
 
   return (
     <>
-      <ProfileUserInfo
-        user={user}
-        isMyPage={isMyPage}
-        isFollowing={isFollowing}
-      />
+      <ProfileUserInfo me={me} user={user} isMyPage={isMyPage} />
       <ul className='mt-4 flex w-full border-b'>
         {tabs.map((tab, idx) => (
           <li
