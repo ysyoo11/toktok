@@ -74,7 +74,7 @@ export default function FollowButton({
             onClick={() => handleFollowUpdate('follow')}
             className={className}
           >
-            {isFollowed ? 'Follow back' : 'Follow'}
+            Follow
           </Button>
         ) : (
           <Button

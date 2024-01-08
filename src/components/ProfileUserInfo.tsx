@@ -1,4 +1,5 @@
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { ProfileUser, SimpleUser } from '@/model/user';
@@ -35,10 +36,12 @@ const initialModalState: ModalState = {
 
 export default function ProfileUserInfo({ me, user, isMyPage }: Props) {
   const [modalState, setModalState] = useState<ModalState>(initialModalState);
+  const router = useRouter();
 
   const showFollowingFollowersModal = (
     type: FollowingFollowersModalDisplayMode,
   ) => {
+    if (!me) router.push('/signin', { scroll: false });
     setModalState({ type, isOpen: true });
   };
 
