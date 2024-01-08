@@ -1,6 +1,10 @@
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
-import { MouseEvent } from 'react';
+import { MouseEvent, useCallback } from 'react';
+import { useSWRConfig } from 'swr';
+
+import { updateFollow } from '@/lib/follow';
+import { USER_SWR_KEY } from '@/swr';
 
 import Avatar from './Avatar';
 
@@ -18,17 +22,35 @@ export default function AvatarFollowButton({
   targetUsername,
 }: Props) {
   const router = useRouter();
+  const { mutate } = useSWRConfig();
 
   const isFollowing = user ? user.following.includes(targetUsername) : false;
 
-  const handleFollow = (e: MouseEvent) => {
-    e.stopPropagation();
-    if (user === undefined) router.push('/signin', { scroll: false });
-    if (isFollowing) {
-      router.push(`/${targetUsername}`);
-    }
-    // TODO: handle follow
-  };
+  const handleFollow = useCallback(
+    (e: MouseEvent) => {
+      e.stopPropagation();
+      if (user === undefined) return router.push('/signin', { scroll: false });
+      if (isFollowing) return router.push(`/${targetUsername}`);
+
+      const newUser: SimpleUser = {
+        ...user,
+        following: [...user.following, targetUsername],
+      };
+      mutate(
+        (key) => typeof key === 'string' && key === USER_SWR_KEY.GET_ME,
+        updateFollow(targetUsername, 'follow'),
+        {
+          optimisticData: newUser,
+          revalidate: false,
+          populateCache: false,
+          rollbackOnError: true,
+        },
+      ).then(() =>
+        mutate((key) => typeof key === 'string' && key.startsWith('/api/user')),
+      );
+    },
+    [isFollowing, router, targetUsername, user, mutate],
+  );
 
   return (
     <button className='relative' onClick={handleFollow}>
