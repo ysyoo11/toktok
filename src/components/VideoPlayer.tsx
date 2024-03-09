@@ -117,7 +117,10 @@ export default function VideoPlayer({ videoUrl, id }: Props) {
           </button>
           {videoRef.current && (
             <>
-              <div className='flex items-center space-x-4'>
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className='flex items-center space-x-4'
+              >
                 <RangeController
                   onChange={onProgressBarControl}
                   value={currentTime}
@@ -136,7 +139,10 @@ export default function VideoPlayer({ videoUrl, id }: Props) {
                 </div>
               </div>
 
-              <div className='group/sound justify-itemscenter absolute right-5 top-0 flex flex-col'>
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className='group/sound justify-itemscenter absolute right-5 top-0 flex flex-col'
+              >
                 <div className='relative'>
                   <div className='absolute -left-5 bottom-5 flex h-6 w-16 -rotate-90 items-center justify-center rounded-full bg-gray-900/40 px-2.5 opacity-0 transition-opacity group-hover/sound:opacity-100'>
                     <RangeController

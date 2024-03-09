@@ -16,7 +16,10 @@ export default function VideoController({
   onProgressBarControl,
 }: Props) {
   return (
-    <div className='flex w-full items-center space-x-4'>
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className='flex w-full items-center space-x-4'
+    >
       <RangeController
         onChange={onProgressBarControl}
         value={currentTime}

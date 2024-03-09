@@ -18,7 +18,10 @@ export default function SoundController({
   toggleMute,
 }: Props) {
   return (
-    <div className='group/sound justify-itemscenter absolute right-5 top-0 hidden flex-col xs:-top-1.5 md:flex'>
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className='group/sound justify-itemscenter absolute right-5 top-0 hidden flex-col xs:-top-1.5 md:flex'
+    >
       <div className='relative'>
         <div className='absolute -left-5 bottom-5 flex h-6 w-16 -rotate-90 items-center justify-center rounded-full bg-black/50 px-2.5'>
           <RangeController
