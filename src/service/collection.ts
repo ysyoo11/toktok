@@ -20,6 +20,7 @@ export async function getCollectionsByUsername(
       name,
       isPrivate,
       "firstVideoUrl": posts[0]->videoUrl,
+      "posts": posts[]->_id
     }`,
     { lastCollectionDate },
   );
@@ -31,7 +32,7 @@ export async function getCollectionById(id: string) {
       "id": _id,
       name,
       isPrivate,
-      "posts": count(posts),
+      "posts": posts[]->id
     }`,
   );
 }
@@ -62,14 +63,25 @@ export async function createCollection(
 }
 
 export async function addPostToCollection(colId: string, postId: string) {
-  await client
+  client
     .patch(postId)
     .setIfMissing({ bookmarks: [] })
     .append('bookmarks', [{ _type: 'reference', _ref: colId }])
     .commit({ autoGenerateArrayKeys: true });
-  return client
+  client
     .patch(colId)
     .setIfMissing({ posts: [] })
     .append('posts', [{ _type: 'reference', _ref: postId }])
     .commit({ autoGenerateArrayKeys: true });
+}
+
+export async function removePostFromCollection(colId: string, postId: string) {
+  client
+    .patch(postId)
+    .unset([`bookmarks[_ref=="${colId}"]`])
+    .commit();
+  client
+    .patch(colId)
+    .unset([`posts[_ref=="${postId}"]`])
+    .commit();
 }

@@ -25,9 +25,13 @@ export async function createCollection(name: string, isPrivate: boolean) {
   }).then((res) => res.json());
 }
 
-export async function addPostToCollection(postId: string, colId: string) {
+export async function updateCollectionPosts(
+  postId: string,
+  colId: string,
+  isSaved: boolean,
+) {
   return fetch(`/api/collections/${colId}`, {
     method: 'PUT',
-    body: JSON.stringify({ postId }),
+    body: JSON.stringify({ postId, isSaved }),
   }).then((res) => res.json());
 }

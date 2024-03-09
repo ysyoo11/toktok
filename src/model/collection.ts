@@ -1,7 +1,7 @@
 export type Collection = {
   id: string;
   name: string;
-  posts: number;
+  posts: string[];
   firstVideoUrl: string;
   isPrivate: boolean;
   createdAt: string;

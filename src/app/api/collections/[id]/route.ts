@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 
-import { addPostToCollection, getCollectionById } from '@/service/collection';
+import {
+  addPostToCollection,
+  getCollectionById,
+  removePostFromCollection,
+} from '@/service/collection';
 
 import { authOptions } from '../../auth/[...nextauth]/options';
 
@@ -26,9 +30,9 @@ export async function PUT(
   { params }: { params: { id: string } },
 ) {
   const session = await getServerSession(authOptions);
-  const uid = session?.user.id;
+  const user = session?.user;
 
-  if (!uid) {
+  if (!user) {
     return NextResponse.json(
       { message: 'Authentication Error' },
       { status: 401 },
@@ -36,16 +40,22 @@ export async function PUT(
   }
 
   const { id } = params;
-  const { postId } = await req.json();
+  const { postId, isSaved } = await req.json();
 
-  if (id === undefined || postId === undefined) {
+  if (id === undefined || postId === undefined || isSaved === undefined) {
     return NextResponse.json({ message: 'Bad request' }, { status: 400 });
   }
 
-  return addPostToCollection(id, postId)
+  const request = isSaved ? removePostFromCollection : addPostToCollection;
+
+  return request(id, postId)
     .then(() =>
       NextResponse.json(
-        { message: `Added to the collection` },
+        {
+          message: isSaved
+            ? `Deleted the post from the collection`
+            : `Added the post to the collection`,
+        },
         { status: 200 },
       ),
     )

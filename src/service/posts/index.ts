@@ -14,7 +14,7 @@ const simplePostProjection = `
   "authorName": author->name,
   "authorImage": author->imageUrl,
   "likes": likes[]->username,
-  bookmarks,
+  "bookmarks": bookmarks[]->author->username,
   music,
   "comments": comments[]{
     _key,
