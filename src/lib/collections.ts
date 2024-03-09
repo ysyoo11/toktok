@@ -24,3 +24,10 @@ export async function createCollection(name: string, isPrivate: boolean) {
     body: JSON.stringify({ name, isPrivate }),
   }).then((res) => res.json());
 }
+
+export async function addPostToCollection(postId: string, colId: string) {
+  return fetch(`/api/collections/${colId}`, {
+    method: 'PUT',
+    body: JSON.stringify({ postId }),
+  }).then((res) => res.json());
+}

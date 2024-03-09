@@ -60,3 +60,16 @@ export async function createCollection(
     .append('collections', [{ _type: 'reference', _ref: collection._id }])
     .commit({ autoGenerateArrayKeys: true });
 }
+
+export async function addPostToCollection(colId: string, postId: string) {
+  await client
+    .patch(postId)
+    .setIfMissing({ bookmarks: [] })
+    .append('bookmarks', [{ _type: 'reference', _ref: colId }])
+    .commit({ autoGenerateArrayKeys: true });
+  return client
+    .patch(colId)
+    .setIfMissing({ posts: [] })
+    .append('posts', [{ _type: 'reference', _ref: postId }])
+    .commit({ autoGenerateArrayKeys: true });
+}

@@ -26,7 +26,7 @@ export type Post = {
   visibility: 'public' | 'friends' | 'private';
   music?: string;
   likes: string[];
-  saved: number;
+  bookmarks: string[];
   comments: Comment[];
   views: number;
   tags?: string[];

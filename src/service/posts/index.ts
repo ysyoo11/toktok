@@ -14,7 +14,7 @@ const simplePostProjection = `
   "authorName": author->name,
   "authorImage": author->imageUrl,
   "likes": likes[]->username,
-  saved,
+  bookmarks,
   music,
   "comments": comments[]{
     _key,
@@ -119,7 +119,7 @@ export async function createPost(
     views: 0,
     comments: [],
     likes: [],
-    saved: 0,
+    bookmarks: [],
     tags: [],
   };
 
@@ -138,6 +138,7 @@ function mapPosts(posts: RawPost[]) {
     return {
       ...post,
       likes: post.likes ?? [],
+      bookmarks: post.bookmarks ?? [],
       comments,
     };
   });
