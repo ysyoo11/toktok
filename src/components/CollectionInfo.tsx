@@ -44,7 +44,7 @@ export default function CollectionInfo({
         )}
       </div>
       <p className='text-xs text-gray-400 sm:text-sm lg:text-base'>
-        {posts} {posts === 1 ? 'video' : 'videos'}
+        {posts.length ?? 0} {posts.length === 1 ? 'video' : 'videos'}
       </p>
       <div className='mt-2 sm:mt-4 lg:mt-6'>
         {manageMode ? (
